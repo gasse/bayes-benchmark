@@ -26,27 +26,64 @@ gen.discrete.bn.fitted = function(vars, dims, parents, probs) {
   
   nodes = list()
   
-  for(node in vars) {
-    cond = data.frame(dims[[node]])
-    for(par in parents[[node]]) {
-      tmp = NULL
-      for(i in 1:length(dims[[par]]))
-        tmp = rbind(tmp, cbind(cond, rep(dims[[par]][i], nrow(cond))))
-      cond = tmp
+  nodes_to_compute = vars
+  
+  while (length(nodes_to_compute) > 0)
+    for (node in nodes_to_compute) {
+      
+      # All parents must have been processed
+      parents.ok = TRUE
+      for (parent in parents[[node]])
+        if(is.null(nodes[[parent]])) {
+          parents.ok = FALSE
+          next
+        }
+      if (!parents.ok)
+        next
+      
+      nodes_to_compute = setdiff(nodes_to_compute, node)
+
+      cond = data.frame(dims[[node]])
+      for (par in parents[[node]]) {
+        tmp = NULL
+        for(i in 1:length(dims[[par]]))
+          tmp = rbind(tmp, cbind(cond, rep(dims[[par]][i], nrow(cond))))
+        cond = tmp
+      }
+      names(cond) = c(node, parents[[node]])
+      
+      children = names(parents)[vapply(parents, function(x) any(x == node), logical(1))]
+      prob = table(cond)
+      
+      for (i in 1:length(prob)) {
+        prob[i] = probs[[node]][[(i - 1) %/% length(dims[[node]]) + 1]][(i - 1) %% length(dims[[node]]) + 1]
+      }
+      
+      varDim = dim(prob)[1]
+      parDim = prod(dim(prob)[-1])
+      for (i in 0:(parDim - 1)) {
+
+        tmp = prob[(i * varDim + 1):(i * varDim + varDim)]
+        
+        if (any(tmp < 0) || sum(tmp) == 0)
+          stop("inconcistency in the probability table of node \"", node,
+               "\" (total probs ", i + 1, ").")
+        
+        err = min(1 - sum(tmp), (100 - sum(tmp)) / 100)
+        if (err > 0.001)
+          warning("probability table of node \"", node,
+                  "\" may be inconsistent, missing ", err,
+                  " to 100 % (row ", i + 1, ").")
+        
+        prob[(i * varDim + 1):(i * varDim + varDim)] = tmp / sum(tmp)
+      }
+      
+      nodes[[node]] = structure(list(
+        node = node,
+        parents = parents[[node]],
+        children = children,
+        prob = prob), class = "bn.fit.dnode")
     }
-    names(cond) = c(node, parents[[node]])
-    
-    children = names(parents)[vapply(parents, function(x) any(x == node), logical(1))]
-    prob = table(cond)
-    for(i in 1:length(prob))
-      prob[i] = probs[[node]][[(i - 1) %/% length(dims[[node]]) + 1]][(i - 1) %% length(dims[[node]]) + 1]
-    
-    nodes[[node]] = structure(list(
-      node = node,
-      parents = parents[[node]],
-      children = children,
-      prob = prob), class = "bn.fit.dnode")
-  }
 
   bn.fitted = structure(nodes, class = "bn.fit")
 }
