@@ -76,78 +76,78 @@ truedag.result = data.frame(
   shd = vector())
 
 # Make skeleton per-node results
-for (network in names(conf.networks)) {
-
-  truedag = conf.dags[[network]]
-  nbnodes = length(truedag$nodes)
-
-  for (samplesize in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
-      for (p in 1:conf.trainingpermuts) {
-        
-        filename = paste(network, "_", samplesize, "_", rep, "_p", p, sep="")
-        cat("skeleton.node", filename, "\n")
-  
-        for (method in conf.pc.methods) {
-          for (test in conf.tests) {
-            
-            skeleton = get(load(paste("models/skeleton/", method, "/", test, "/", filename, "_skeleton.rda", sep="")))
-            time = get(load(paste("models/skeleton/", method, "/", test, "/", filename, "_time.rda", sep="")))
-            
-            for (node in names(truedag$nodes)) {
-              
-              tnbr = truedag$nodes[[node]]$nbr
-              rnbr = skeleton$nodes[[node]]$nbr
-              tp = 0
-              fp = 0
-              tn = nbnodes - 1 - length(tnbr)
-              fn = length(tnbr)
-              
-              for (n in rnbr) {
-                if(n %in% tnbr) {
-                  fn = fn - 1
-                  tp = tp + 1
-                }
-                else {
-                  tn = tn - 1
-                  fp = fp + 1
-                }
-              }
-              
-              recall = ifelse(fn == 0, 1, tp / (tp + fn))
-              precision = ifelse(fp == 0, 1, tp / (tp + fp))
-              error = sqrt((1 - recall)^2 + (1 - precision)^2)
-              
-              specificity = ifelse(fp == 0, 1, tn / (tn + fp))
-              
-              skeleton.node.result = rbind(skeleton.node.result, data.frame(
-                method = method,
-                network = network,
-                samplesize = samplesize,
-                rep = rep,
-                p = p,
-                node = node,
-                nodecard = length(tnbr),
-                nbtests = skeleton$learning$ntests,
-                nbnodes = nbnodes,
-                time.user = time["user.self"],
-                time.sys = time["sys.self"],
-                nbarcs = nrow(truedag$arcs),
-                tp = tp,
-                tn = tn,
-                fp = fp,
-                fn = fn,
-                recall = recall,
-                precision = precision,
-                error = error,
-                specificity = specificity))
-            }
-          }
-        }
-      }
-    }
-  }
-}
+# for (network in names(conf.networks)) {
+# 
+#   truedag = conf.dags[[network]]
+#   nbnodes = length(truedag$nodes)
+# 
+#   for (samplesize in conf.trainingsizes) {
+#     for (rep in 1:conf.trainingreps) {
+#       for (p in 1:conf.trainingpermuts) {
+#         
+#         filename = paste(network, "_", samplesize, "_", rep, "_p", p, sep="")
+#         cat("skeleton.node", filename, "\n")
+#   
+#         for (method in conf.pc.methods) {
+#           for (test in conf.tests) {
+#             
+#             skeleton = get(load(paste("models/skeleton/", method, "/", test, "/", filename, "_skeleton.rda", sep="")))
+#             time = get(load(paste("models/skeleton/", method, "/", test, "/", filename, "_time.rda", sep="")))
+#             
+#             for (node in names(truedag$nodes)) {
+#               
+#               tnbr = truedag$nodes[[node]]$nbr
+#               rnbr = skeleton$nodes[[node]]$nbr
+#               tp = 0
+#               fp = 0
+#               tn = nbnodes - 1 - length(tnbr)
+#               fn = length(tnbr)
+#               
+#               for (n in rnbr) {
+#                 if(n %in% tnbr) {
+#                   fn = fn - 1
+#                   tp = tp + 1
+#                 }
+#                 else {
+#                   tn = tn - 1
+#                   fp = fp + 1
+#                 }
+#               }
+#               
+#               recall = ifelse(fn == 0, 1, tp / (tp + fn))
+#               precision = ifelse(fp == 0, 1, tp / (tp + fp))
+#               error = sqrt((1 - recall)^2 + (1 - precision)^2)
+#               
+#               specificity = ifelse(fp == 0, 1, tn / (tn + fp))
+#               
+#               skeleton.node.result = rbind(skeleton.node.result, data.frame(
+#                 method = method,
+#                 network = network,
+#                 samplesize = samplesize,
+#                 rep = rep,
+#                 p = p,
+#                 node = node,
+#                 nodecard = length(tnbr),
+#                 nbtests = skeleton$learning$ntests,
+#                 nbnodes = nbnodes,
+#                 time.user = time["user.self"],
+#                 time.sys = time["sys.self"],
+#                 nbarcs = nrow(truedag$arcs),
+#                 tp = tp,
+#                 tn = tn,
+#                 fp = fp,
+#                 fn = fn,
+#                 recall = recall,
+#                 precision = precision,
+#                 error = error,
+#                 specificity = specificity))
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+# }
 
 # Make skeleton results
 for (network in names(conf.networks)) {
