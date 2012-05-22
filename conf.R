@@ -3,15 +3,15 @@ source("functions.R")
 conf.networks = list()
 conf.dags = list()
 
-#c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
-for (network in c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")) {
+#c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")
+for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")) {
   tmp = gen.network.from.file(network)
   conf.networks[[network]] = tmp[["bn.fitted"]]
   conf.dags[[network]] = tmp[["bn"]]
 }
 
 conf.trainingsizes = c(50, 100, 200, 500, 1500, 5000)
-conf.pc.methods = c("mmpc", "hpc")# c("mmpc", "hpc", "hpc-and")
+conf.pc.methods = c("mmpc", "hpc", "hpc-and")# c("mmpc", "hpc", "hpc-and")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.trainingreps = 10
 conf.trainingpermuts = 1
