@@ -224,6 +224,87 @@ bn.fitted.from.file = function(network) {
   return(gen.discrete.bn(vars, parents))
 }
 
+gen.hugin = function(bn.fitted, name, filename) {
+  
+  cat(file = filename, sep = "", append = FALSE, "net", "\n")
+  cat(file = filename, sep = "", append = TRUE, "{", "\n")
+  cat(file = filename, sep = "", append = TRUE, "  name = \"", name, "\";", "\n")
+  cat(file = filename, sep = "", append = TRUE, "}", "\n")
+  
+  for (node in names(bn.fitted)) {
+    cat(file = filename, sep = "", append = TRUE, "", "\n")
+    cat(file = filename, sep = "", append = TRUE, "node ", node, "\n")
+    cat(file = filename, sep = "", append = TRUE, "{", "\n")
+    cat(file = filename, sep = "", append = TRUE, "  label = \"", node, "\";", "\n")
+    cat(file = filename, sep = "", append = TRUE, "  states = (\"", paste(dimnames(bn.fitted[[node]]$prob)[[1]], collapse = "\" \""), "\");", "\n")
+    cat(file = filename, sep = "", append = TRUE, "}", "\n")
+  }
+  
+  format_probs_rec = function(probs.table, conds = c()) {
+    
+    lines = vector()
+    dims = dim(probs.table)
+    
+    if (length(conds) + 1 == length(dims)) {
+      
+      from = 1
+      if (length(conds) > 0)
+        for (i in 1:length(conds))
+          from = from + (conds[i] - 1) * prod(dims[setdiff(1:length(dims), 2:(i+1))])
+      
+      to = from + dims[1] - 1
+      
+      return(paste(" ", paste(formatC(probs.table[from:to], format="fg"), collapse = " "), " ", sep = ""))
+      
+    }
+    
+    for (i in 1:dims[length(conds) + 2]) {
+      
+      start = "("
+      if (i > 1)
+        start = paste(paste(rep(" ", length(conds)), collapse = ""), start, sep="")
+      end = ")"
+      
+      tmp = format_probs_rec(probs.table, c(conds, i))
+      tmp[1] = paste(start, tmp[1], sep = "")
+      tmp[length(tmp)] = paste(tmp[length(tmp)], end, sep = "")
+      
+      lines = c(lines, tmp)
+    }
+    
+    return(lines)
+  }
+  
+  format_dims = function(dimnames) {
+    
+    lines = c()
+    
+    if(length(dimnames) > 0) {
+      subdims = format_dims(dimnames[-1])
+      for (dim in unlist(dimnames[1]))
+        lines = c(lines, paste("\"", dim, "\" ", subdims, sep = ""))
+    }
+    
+    return(lines)
+  }
+  
+  for (node in names(bn.fitted)) {
+    cat(file = filename, sep = "", append = TRUE, "", "\n")
+    cat(file = filename, sep = "", append = TRUE, "potential (", node)
+    parents = bn.fitted[[node]]$parents
+    if (length(parents) > 0)
+      cat(file = filename, sep = "", append = TRUE, " | ", paste(parents, collapse = " "))
+    cat(file = filename, sep = "", append = TRUE, ")", "\n")
+    cat(file = filename, sep = "", append = TRUE, "{", "\n")
+    cat(file = filename, sep = "", append = TRUE, "  data = (", "\n")
+    cat(file = filename, sep = "", append = TRUE, paste("  ",
+                                                        paste(format_probs_rec(bn.fitted[[node]]$prob), format_dims(dimnames(bn.fitted[[node]]$prob)[-1]), sep = " % "),
+                                                        "\n", collapse = "", sep = ""))
+    cat(file = filename, sep = "", append = TRUE, "  );", "\n")
+    cat(file = filename, sep = "", append = TRUE, "}", "\n")
+  }
+}
+
 # Pasted from bnlearn::backend-score.R
 arcs.to.be.added = function(amat, nodes, blacklist = NULL, whitelist = NULL,
                             arcs = TRUE) {
