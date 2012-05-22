@@ -19,7 +19,7 @@ vars = c(vars, "VehicleYear")
 dims[["VehicleYear"]] = c("Current", "Older")
 
 vars = c(vars, "ThisCarDam")
-dims[["ThisCarDam"]] = c("None", "Mild", "Moderate Severe")
+dims[["ThisCarDam"]] = c("None", "Mild", "Moderate", "Severe")
 
 vars = c(vars, "RuggedAuto")
 dims[["RuggedAuto"]] = c("EggShell", "Football", "Tank")
@@ -465,7 +465,7 @@ probs[["OtherCarCost"]] = list(
   c(1, 0, 0, 0),
   c(1, 0, 0, 0),
   c(0.99, 0.005, 0.00499, 0.00001),
-  c(0.98, 0.01, 0.009985, 0.00005),
+  c(0.98, 0.01, 0.009995, 0.000005),
   c(0.95, 0.03, 0.01998, 0.00002),
   c(0.6, 0.2, 0.19998, 0.00002),
   c(0.5, 0.2, 0.29997, 0.00003),
