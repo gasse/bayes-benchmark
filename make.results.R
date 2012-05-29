@@ -303,7 +303,7 @@ save(dag.result, file="results/dag.result.rda")
 save(truedag.result, file="results/truedag.result.rda")
 
 # Check the results
-aggregate(skeleton.node.result$network, list(skeleton.node.result$network, skeleton.node.result$method, skeleton.node.result$samplesize), length)
+#aggregate(skeleton.node.result$network, list(skeleton.node.result$network, skeleton.node.result$method, skeleton.node.result$samplesize), length)
 aggregate(skeleton.result$network, list(skeleton.result$network, skeleton.result$method, skeleton.result$samplesize), length)
 aggregate(dag.result$network, list(dag.result$search, dag.result$network, dag.result$method, dag.result$samplesize), length)
 aggregate(truedag.result$network, list(truedag.result$network, truedag.result$samplesize, truedag.result$rep, truedag.result$p), length)
