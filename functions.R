@@ -26,10 +26,10 @@ gen.discrete.bn.fitted = function(vars, dims, parents, probs) {
   
   nodes = list()
   
-  nodes_to_compute = vars
+  nodes_to_process = vars
   
-  while (length(nodes_to_compute) > 0)
-    for (node in nodes_to_compute) {
+  while (length(nodes_to_process) > 0)
+    for (node in nodes_to_process) {
       
       # All parents must have been processed
       parents.ok = TRUE
@@ -41,28 +41,23 @@ gen.discrete.bn.fitted = function(vars, dims, parents, probs) {
       if (!parents.ok)
         next
       
-      nodes_to_compute = setdiff(nodes_to_compute, node)
-
-      cond = data.frame(dims[[node]])
-      for (par in parents[[node]]) {
-        tmp = NULL
-        for(i in 1:length(dims[[par]]))
-          tmp = rbind(tmp, cbind(cond, rep(dims[[par]][i], nrow(cond))))
-        cond = tmp
-      }
-      names(cond) = c(node, parents[[node]])
+      nodes_to_process = setdiff(nodes_to_process, node)
       
-      children = names(parents)[vapply(parents, function(x) any(x == node), logical(1))]
-      prob = table(cond)
+      cfgs = expand.grid(lapply(c(node, parents[[node]]), function(x) {return(dims[[x]])}))
+      names(cfgs) = c(node, parents[[node]])
       
-      for (i in 1:length(prob)) {
-        prob[i] = probs[[node]][[(i - 1) %/% length(dims[[node]]) + 1]][(i - 1) %% length(dims[[node]]) + 1]
+      # cfgs must be correctly ordered here (node names and values) to match the
+      # order in wich are given the conditional probabilities in the file
+      prob = table(cfgs)
+      for (i in 1:prod(dim(prob))) {
+        prob.vector = probs[[node]][[(i - 1) %/% length(dims[[node]]) + 1]]
+        prob[i] = prob.vector[(i - 1) %% length(dims[[node]]) + 1]
       }
       
       varDim = dim(prob)[1]
       parDim = prod(dim(prob)[-1])
       for (i in 0:(parDim - 1)) {
-
+        
         tmp = prob[(i * varDim + 1):(i * varDim + varDim)]
         
         if (any(tmp < 0) || sum(tmp) == 0)
@@ -78,6 +73,8 @@ gen.discrete.bn.fitted = function(vars, dims, parents, probs) {
         prob[(i * varDim + 1):(i * varDim + varDim)] = tmp / sum(tmp)
       }
       
+      children = names(parents)[vapply(parents, function(x) any(x == node), logical(1))]
+      
       nodes[[node]] = structure(list(
         node = node,
         parents = parents[[node]],
@@ -91,10 +88,10 @@ gen.discrete.bn.fitted = function(vars, dims, parents, probs) {
 gen.dataset.from.fitted.bn = function(bn.fitted, n) {
   
   data = list()
-  nodes_to_compute = names(bn.fitted)
+  nodes_to_process = names(bn.fitted)
   
-  while (length(nodes_to_compute) > 0)
-    for (node in nodes_to_compute) {
+  while (length(nodes_to_process) > 0)
+    for (node in nodes_to_process) {
       
       parents = bn.fitted[[node]]$parents
       dims = names(margin.table(bn.fitted[[node]]$prob, 1))
@@ -110,7 +107,7 @@ gen.dataset.from.fitted.bn = function(bn.fitted, n) {
       if (!parents.ok)
         next
       
-      nodes_to_compute = setdiff(nodes_to_compute, node)
+      nodes_to_process = setdiff(nodes_to_process, node)
       
       # Simplest case : no parents
       if (length(parents) == 0) {
