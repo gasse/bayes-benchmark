@@ -11,8 +11,7 @@ global.result = cbind(dag.result, data.frame(
   "recall" = rep(NA, nrow(dag.result)),
   "precision" = rep(NA, nrow(dag.result)),
   "error" = rep(NA, nrow(dag.result)),
-  "specificity" = rep(NA, nrow(dag.result)),
-  "fpr" = rep(NA, nrow(dag.result))))
+  "specificity" = rep(NA, nrow(dag.result))))
 
 for (search in unique(dag.result$search)) {
   global.result[global.result$search == search, "tp"] = skeleton.result[, "tp"]
@@ -23,7 +22,6 @@ for (search in unique(dag.result$search)) {
   global.result[global.result$search == search, "precision"] = skeleton.result[, "precision"]
   global.result[global.result$search == search, "error"] = skeleton.result[, "error"]
   global.result[global.result$search == search, "specificity"] = skeleton.result[, "specificity"]
-  global.result[global.result$search == search, "fpr"] = skeleton.result[, "fpr"]
 }
 
 pc.plot = function(res, x, y, seps, color = "red", pch = 3, lty = 1) {
@@ -61,7 +59,7 @@ pc.boxplot = function(x, y, xlab, ylab, color) {
   lines(aggregate(y, list(factor(x)), mean), type = "l", col = color)
 }
 
-pc.boxplot.imp = function(x, y, xlab, ylab) {
+pc.boxplot.imp = function(x, y, xlab, ylab, color) {
   y = y[y != NA | y != Inf]
   x = x[y != NA | y != Inf]
   #  plot(aggregate(y, list(x), mean), pch = 16, xlab = xlab, ylab = paste(ylab, "% improvement"))
@@ -71,7 +69,7 @@ pc.boxplot.imp = function(x, y, xlab, ylab) {
           #          xlab="",
           ylab = "evolution ratio",
 #          ylab = "",
-          border = "dodgerblue4",
+          border = color,
           boxwex = 0.5,
           ylim = c(min(0, min(ifelse(by == Inf, NA, by), na.rm=TRUE)), max(0, max(ifelse(by == Inf, NA, by), na.rm=TRUE)))
 #          at = aggregate(bx, list(bx), mean)[, "x"],
@@ -286,7 +284,7 @@ for(target in c(names(conf.networks), "all")) {
     par(disp.pars)
     by = (y[res_disp[, "method"] == "hpc"] / y[res_disp[, "method"] == "mmpc"] - 1)
     bx = x[res_disp[, "method"] == "hpc"]
-    pc.boxplot.imp(bx, by, xlab, ylab)
+    pc.boxplot.imp(bx, by, xlab, ylab, "dodgerblue4")
     dev.off()
     
     # Improvement boxplot (hpc-and)
@@ -294,7 +292,7 @@ for(target in c(names(conf.networks), "all")) {
     par(disp.pars)
     by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"] - 1)
     bx = x[res_disp[, "method"] == "hpc-and"]
-    pc.boxplot.imp(bx, by, xlab, ylab)
+    pc.boxplot.imp(bx, by, xlab, ylab, "forestgreen")
     dev.off()
 
   }
