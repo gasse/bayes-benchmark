@@ -92,7 +92,7 @@ for(target in c(names(conf.networks), "all")) {
   # c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link", "all")
   
   if(target == "all") {
-    file = "global"
+    file = "_all"
     networks = names(conf.networks)
   }
   else {
@@ -124,79 +124,87 @@ for(target in c(names(conf.networks), "all")) {
   yaxises = list()
   
   ylab = "Skeleton Euclidian distance"; measure = "skel_error"; y = res_disp[, "error"]
-  ylim = c(0, sqrt(2))
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, sqrt(2))
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Skeleton Recall"; measure = "skel_recall"; y = res_disp[, "recall"]
-  ylim = c(0, 1)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Skeleton Precision"; measure = "skel_precision"; y = res_disp[, "precision"]
-  ylim = c(0, 1)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Skeleton Specificity"; measure = "skel_specificity"; y = res_disp[, "specificity"]
-  ylim = c(0, 1)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Skeleton False positive rate"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
-  ylim = c(0, 1)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Skeleton False negative rate"; measure = "skel_fnr"; y = 1 - res_disp[, "recall"]
-  ylim = c(0, 1)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Constraint time"; measure = "time_constraint"; y = res_disp[, "constraint.time.user"]
-  ylim = c(0, ifelse(length(networks) > 1, max(aggregate(y, list(x, res_disp$method), mean)$x), max(y)) * 1.05)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Search time"; measure = "time_search"; y = res_disp[, "search.time.user"]
-  ylim = c(0, ifelse(length(networks) > 1, max(aggregate(y, list(x, res_disp$method), mean)$x), max(y)) * 1.05)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Total time"; measure = "time_total"; y = res_disp[, "constraint.time.user"] + res_disp[, "search.time.user"]
-  ylim = c(0, ifelse(length(networks) > 1, max(aggregate(y, list(x, res_disp$method), mean)$x), max(y)) * 1.05)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Number of statistical tests"; measure = "nbtests"; y = res_disp[, "nbtests"]
-  ylim = c(0, ifelse(length(networks) > 1, max(aggregate(y, list(x, res_disp$method), mean)$x), max(y)) * 1.05)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "Number of scores"; measure = "nbscores"; y = res_disp[, "nbscores"]
-  ylim = c(0, ifelse(length(networks) > 1, max(aggregate(y, list(x, res_disp$method), mean)$x), max(y)) * 1.05)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "SHD"; measure = "score_SHD"; y = res_disp[, "shd"]
-  ylim = c(0, ifelse(length(networks) > 1, max(aggregate(y, list(x, res_disp$method), mean)$x), max(y)) * 1.05)
+  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   ylab = "BDe on train data"; measure = "score_BDe_train"; y = res_disp[, "bde.train"]
-  ylim = c(ifelse(length(networks) > 1, min(aggregate(y, list(x, res_disp$method), mean)$x), min(y)) * 1.05, 0)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.train"]
-  if (!is.null(x_truedag))
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)) * 1.05)
+  if (!is.null(x_truedag)) {
+    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
+    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+  }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
   ylab = "BIC on train data"; measure = "score_BIC_train"; y = res_disp[, "bic.train"]
-  ylim = c(ifelse(length(networks) > 1, min(aggregate(y, list(x, res_disp$method), mean)$x), min(y)) * 1.05, 0)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.train"]
-  if (!is.null(x_truedag))
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)) * 1.05)
+  if (!is.null(x_truedag)) {
+    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
+    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+  }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
   ylab = "BDe on test data"; measure = "score_BDe_test"; y = res_disp[, "bde.test"]
-  ylim = c(ifelse(length(networks) > 1, min(aggregate(y, list(x, res_disp$method), mean)$x), min(y)) * 1.05, 0)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.test"]
-  if (!is.null(x_truedag))
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)) * 1.05)
+  if (!is.null(x_truedag)) {
+    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
+    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+  }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
   ylab = "BIC on test data"; measure = "score_BIC_test"; y = res_disp[, "bic.test"]
-  ylim = c(ifelse(length(networks) > 1, min(aggregate(y, list(x, res_disp$method), mean)$x), min(y)) * 1.05, 0)
+  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.test"]
-  if (!is.null(x_truedag))
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)) * 1.05)
+  if (!is.null(x_truedag)) {
+    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
+    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+  }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
   for (axis in yaxises) {
@@ -244,6 +252,15 @@ for(target in c(names(conf.networks), "all")) {
       #  ,p = 1:5
       ))
     
+#     # 2npc
+#     pc.plot(res = res_disp, x, y, color = "darkmagenta", pch = 1, seps = list(
+#       method = "2npc"
+#       #  ,search = "tabu"
+#       #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
+#       #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
+#       #  ,p = 1:5
+#       ))
+    
     # mmpc
     pc.plot(res = res_disp, x, y, color = "red", pch = 2, seps = list(
       method = "mmpc"
@@ -271,6 +288,14 @@ for(target in c(names(conf.networks), "all")) {
     pc.boxplot(bx, by, xlab, ylab, color = "darkgreen")
     dev.off()
     
+#     # Raw boxplot (2npc)
+#     png(paste(folder, "/", file, "_2npc_", measure, ".png", sep=""))
+#     par(disp.pars)
+#     by = y[res_disp[, "method"] == "2npc"]
+#     bx = x[res_disp[, "method"] == "2npc"]
+#     pc.boxplot(bx, by, xlab, ylab, color = "darkmagenta")
+#     dev.off()
+    
     # Raw boxplot (mmpc)
     png(paste(folder, "/", file, "_mmpc_", measure, ".png", sep=""))
     par(disp.pars)
@@ -294,6 +319,14 @@ for(target in c(names(conf.networks), "all")) {
     bx = x[res_disp[, "method"] == "hpc-and"]
     pc.boxplot.imp(bx, by, xlab, ylab, "forestgreen")
     dev.off()
+    
+#     # Improvement boxplot (2npc)
+#     png(paste(folder, "/", file, "_ratio_2npc_", measure, ".png", sep=""))
+#     par(disp.pars)
+#     by = (y[res_disp[, "method"] == "2npc"] / y[res_disp[, "method"] == "mmpc"] - 1)
+#     bx = x[res_disp[, "method"] == "2npc"]
+#     pc.boxplot.imp(bx, by, xlab, ylab, "deeppink4")
+#     dev.off()
 
   }
 }
