@@ -4,10 +4,18 @@ conf.networks = list()
 conf.dags = list()
 
 #c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")
-for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")) {
-  tmp = gen.network.from.file(network)
-  conf.networks[[network]] = tmp[["bn.fitted"]]
-  conf.dags[[network]] = tmp[["bn"]]
+# for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")) {
+#   tmp = gen.network.from.file(network)
+#   conf.networks[[network]] = tmp[["bn.fitted"]]
+#   conf.dags[[network]] = tmp[["bn"]]
+# }
+
+# "alarm", "andes", "asia", "barley", "diabetes", "hailfinder", "hepar2",
+# "insurance", "link", "mildew", "munin", "munin1","munin2", "munin3", "munin4",
+# "pigs", "water", "win95pts"
+for (network in c("alarm")) {
+  conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
+  conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
 conf.trainingsizes = c(50, 100, 200, 500, 1500, 5000)
