@@ -138,16 +138,16 @@ gen.dataset.from.fitted.bn = function(bn.fitted, n) {
       # Transform parent's values
       k = 0
       for (dim in par_dims) {
-        data[[node]][data[[node]] == dim] = sample(
+        data[[node]][data[[node]] == dim] = factor(sample(
               dims,
               length(which(data[[node]] == dim)),
               prob = probs[(k * length(dims) + 1):((k + 1) * length(dims))],
-              replace = TRUE)
+              replace = TRUE), dims)
         k = k + 1
       }
     }
   
-  as.data.frame(data)
+  return(as.data.frame(data))
 }
 
 gen.dataset = function(vars, dims, parents, probs, n) {
