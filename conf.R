@@ -16,10 +16,7 @@ save(bn, file ="networks/insurance5.rda")
 bn = gen.rep.bn.fit(insurance, 10)
 save(bn, file ="networks/insurance10.rda")
 
-#child = get(load("networks/child.rda"))
-child = gen.network.from.file("child")$bn.fitted
-bn = child
-save(bn, file = "networks/child.rda")
+child = get(load("networks/child.rda"))
 bn = gen.rep.bn.fit(child, 3)
 save(bn, file = "networks/child3.rda")
 bn = gen.rep.bn.fit(child, 5)
