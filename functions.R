@@ -388,3 +388,19 @@ learn.dag = function(params) {
   save(time, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", filename, "_p", p, "_time.rda", sep=""))
   
 }#LEARN.DAG
+
+gen.rep.bn.fit = function(bn, nb) {
+  bn.rep = structure(list(), class = "bn.fit")
+  for (node in names(bn)) {
+    for (i in 1:nb) {
+      node.new = paste(node, i, sep="_")
+      bn.rep[[node.new]] = bn[[node]]
+      bn.rep[[node.new]]$node = node.new
+      if (length(bn[[node]]$parents) > 0)
+        bn.rep[[node.new]]$parents = paste(bn[[node]]$parents, i, sep="_")
+      if (length(bn[[node]]$children) > 0)
+        bn.rep[[node.new]]$children = paste(bn[[node]]$children, i, sep="_")
+    }
+  }
+  return(bn.rep)
+}
