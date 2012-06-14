@@ -37,9 +37,14 @@ conf.dags = list()
 # "alarm", "andes", "asia", "barley", "diabetes", "hailfinder", "hepar2",
 # "insurance", "link", "mildew", "munin", "munin1","munin2", "munin3", "munin4",
 # "pigs", "water", "win95pts"
-for (network in c("alarm", "alarm3", "alarm5", "alarm10", "insurance",
-                  "insurance3", "insurance5", "insurance10",
-                  "child", "child3","child5", "child10")) {
+
+# "alarm", "alarm3", "alarm5", "alarm10",
+# "insurance", "insurance3", "insurance5", "insurance10",
+# "child", "child3", "child5", "child10"
+
+for (network in c("alarm", "alarm3", "alarm5", "alarm10",
+                  "insurance", "insurance3", "insurance5", "insurance10",
+                  "child", "child3", "child5", "child10")) {
   conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
@@ -47,6 +52,7 @@ for (network in c("alarm", "alarm3", "alarm5", "alarm10", "insurance",
 conf.trainingsizes = c(50, 100, 200, 500, 1500, 5000)
 conf.pc.methods = c("mmpc", "hpc", "hpc-and")# c("mmpc", "hpc", "hpc-and")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
+conf.alphas = c(0.01, 0.02, 0.05)
 conf.trainingreps = 10
 conf.trainingpermuts = 1
 conf.testsize = 5000
