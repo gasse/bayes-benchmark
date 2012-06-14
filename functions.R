@@ -329,6 +329,7 @@ learn.skeleton = function(params) {
   seed = params$seed
   test = params$test
   p = params$p
+  alpha = params$alpha
   
   set.seed(seed)
   
@@ -339,20 +340,20 @@ learn.skeleton = function(params) {
   
   time = system.time((
     skeleton = switch(method,
-                      "mmpc" = mmpc(x = training[, order], test = test, alpha = 0.05,
+                      "mmpc" = mmpc(x = training[, order], test = test, alpha = alpha,
                                     optimized = FALSE, strict = FALSE, undirected = TRUE),
-                      "hpc" = hpc(x = training[, order], test = test, alpha = 0.05,
+                      "hpc" = hpc(x = training[, order], test = test, alpha = alpha,
                                   optimized = FALSE, strict = FALSE, undirected = TRUE),
-                      "hpc-and" = hpc(x = training[, order], test = test, alpha = 0.05,
+                      "hpc-and" = hpc(x = training[, order], test = test, alpha = alpha,
                                       optimized = FALSE, strict = FALSE, undirected = TRUE,
                                       nbr.join = "AND")
                       )
     ))
   
-  dir.create(paste("models/skeleton/", method, "/", test, sep=""), recursive = TRUE, showWarnings = FALSE)
+  dir.create(paste("models/skeleton/", method, "/", test, "/", alpha, sep=""), recursive = TRUE, showWarnings = FALSE)
   
-  save(skeleton, file=paste("models/skeleton/", method, "/", test, "/", filename, "_p", p, "_skeleton.rda", sep=""))
-  save(time, file=paste("models/skeleton/", method, "/", test, "/", filename, "_p", p, "_time.rda", sep=""))
+  save(skeleton, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep=""))
+  save(time, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep=""))
   
 }#LEARN.SKELETON
 
@@ -366,6 +367,7 @@ learn.dag = function(params) {
   seed = params$seed
   test = params$test
   p = params$p
+  alpha = params$alpha
   
   set.seed(seed)
   
@@ -373,7 +375,7 @@ learn.dag = function(params) {
   
   training = get(load(paste("samples/", filename, "_training.rda", sep="")))
   order = get(load(paste("samples/", filename, "_order_", p, ".rda", sep="")))
-  skeleton = get(load(paste("models/skeleton/", fromMethod, "/", test, "/", filename, "_p", p, "_skeleton.rda", sep="")))
+  skeleton = get(load(paste("models/skeleton/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep="")))
   
   time = system.time((
     dag = switch(method,
@@ -386,10 +388,10 @@ learn.dag = function(params) {
                  )
     ))
   
-  dir.create(paste("models/dag/", method, "/", fromMethod, "/", test, sep=""), recursive = TRUE, showWarnings = FALSE)
+  dir.create(paste("models/dag/", method, "/", fromMethod, "/", test, "/", alpha, sep=""), recursive = TRUE, showWarnings = FALSE)
   
-  save(dag, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", filename, "_p", p, "_dag.rda", sep=""))
-  save(time, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", filename, "_p", p, "_time.rda", sep=""))
+  save(dag, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_dag.rda", sep=""))
+  save(time, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep=""))
   
 }#LEARN.DAG
 

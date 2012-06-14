@@ -6,6 +6,7 @@ skeleton.node.result = data.frame(
   samplesize = vector(),
   rep = vector(),
   p = vector(),
+  alpha = vector(),
   node = vector(),
   nodecard = vector(),
   nbtests = vector(),
@@ -28,6 +29,7 @@ skeleton.result = data.frame(
   samplesize = vector(),
   rep = vector(),
   p = vector(),
+  alpha = vector(),
   nbtests = vector(),
   time.user = vector(),
   time.sys = vector(),
@@ -49,6 +51,7 @@ dag.result = data.frame(
   samplesize = vector(),
   rep = vector(),
   p = vector(),
+  alpha = vector(),
   constraint.nbarcs = vector(),
   nbtests = vector(),
   nbscores = vector(),
@@ -67,6 +70,7 @@ truedag.result = data.frame(
   samplesize = vector(),
   rep = vector(),
   p = vector(),
+  alpha = vector(),
   nbnodes = vector(),
   nbarcs = vector(),
   bde.test = vector(),
@@ -157,71 +161,74 @@ for (network in names(conf.networks)) {
   for (samplesize in conf.trainingsizes) {
     for (rep in 1:conf.trainingreps) {
       for (p in 1:conf.trainingpermuts) {
+        for (alpha in conf.alphas) {
 
-        filename = paste(network, "_", samplesize, "_", rep, "_p", p, sep="")
-        cat("skeleton", filename, "\n")
-        
-        for (method in conf.pc.methods) {
-          for (test in conf.tests) {
-            
-            skeleton = get(load(paste("models/skeleton/", method, "/", test, "/", filename, "_skeleton.rda", sep="")))
-            time = get(load(paste("models/skeleton/", method, "/", test, "/", filename, "_time.rda", sep="")))
-            
-            tp = 0
-            tn = 0
-            fp = 0
-            fn = 0
-            
-            done = vector()
-            for (node in names(truedag$nodes)) {
+          filename = paste(network, "_", samplesize, "_", rep, "_p", p, sep="")
+          cat("skeleton", filename, "\n")
+          
+          for (method in conf.pc.methods) {
+            for (test in conf.tests) {
               
-              done = c(done, node)
-              tnbr = setdiff(truedag$nodes[[node]]$nbr, done)
-              rnbr = setdiff(skeleton$nodes[[node]]$nbr, done)
+              skeleton = get(load(paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_skeleton.rda", sep="")))
+              time = get(load(paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_time.rda", sep="")))
               
-              fn = fn + length(tnbr)
-              for(n in tnbr) {
-                if(n %in% rnbr) {
-                  tp = tp + 1
-                  fn = fn - 1
+              tp = 0
+              tn = 0
+              fp = 0
+              fn = 0
+              
+              done = vector()
+              for (node in names(truedag$nodes)) {
+                
+                done = c(done, node)
+                tnbr = setdiff(truedag$nodes[[node]]$nbr, done)
+                rnbr = setdiff(skeleton$nodes[[node]]$nbr, done)
+                
+                fn = fn + length(tnbr)
+                for(n in tnbr) {
+                  if(n %in% rnbr) {
+                    tp = tp + 1
+                    fn = fn - 1
+                  }
+                }
+                
+                for(n in rnbr) {
+                  if(!(n %in% tnbr)) {
+                    fp = fp + 1
+                  }
                 }
               }
               
-              for(n in rnbr) {
-                if(!(n %in% tnbr)) {
-                  fp = fp + 1
-                }
-              }
+              nbnodes = length(truedag$nodes)
+              tn = nbnodes * (nbnodes - 1) - tp - fn - fp
+              
+              recall = ifelse(fn == 0, 1, tp / (tp + fn)) # Couverture d'arcs (1=tous 0=aucun)
+              precision = ifelse(fp == 0, 1, tp / (tp + fp)) # Arcs en trop (1=tous 0=aucun)
+              error = sqrt((1 - recall)^2 + (1 - precision)^2)
+              
+              specificity = ifelse(fp == 0, 1, tn / (tn + fp)) # Couverture des non-arcs (1=tous 0=aucun)
+              
+              skeleton.result = rbind(skeleton.result, data.frame(
+                method = method,
+                network = network,
+                samplesize = samplesize,
+                rep = rep,
+                p = p,
+                alpha = alpha,
+                nbtests = skeleton$learning$ntests,
+                nbnodes = nbnodes,
+                time.user = time["user.self"],
+                time.sys = time["sys.self"],
+                nbarcs = nrow(truedag$arcs),
+                tp = tp,
+                tn = tn,
+                fp = fp,
+                fn = fn,
+                recall = recall,
+                precision = precision,
+                error = error,
+                specificity = specificity))
             }
-            
-            nbnodes = length(truedag$nodes)
-            tn = nbnodes * (nbnodes - 1) - tp - fn - fp
-            
-            recall = ifelse(fn == 0, 1, tp / (tp + fn)) # Couverture d'arcs (1=tous 0=aucun)
-            precision = ifelse(fp == 0, 1, tp / (tp + fp)) # Arcs en trop (1=tous 0=aucun)
-            error = sqrt((1 - recall)^2 + (1 - precision)^2)
-            
-            specificity = ifelse(fp == 0, 1, tn / (tn + fp)) # Couverture des non-arcs (1=tous 0=aucun)
-            
-            skeleton.result = rbind(skeleton.result, data.frame(
-              method = method,
-              network = network,
-              samplesize = samplesize,
-              rep = rep,
-              p = p,
-              nbtests = skeleton$learning$ntests,
-              nbnodes = nbnodes,
-              time.user = time["user.self"],
-              time.sys = time["sys.self"],
-              nbarcs = nrow(truedag$arcs),
-              tp = tp,
-              tn = tn,
-              fp = fp,
-              fn = fn,
-              recall = recall,
-              precision = precision,
-              error = error,
-              specificity = specificity))
           }
         }
       }
@@ -236,59 +243,63 @@ for (network in names(conf.networks)) {
 
   for (samplesize in conf.trainingsizes) {
     for (rep in 1:conf.trainingreps) {
+      for (alpha in conf.alphas) {
 
-      filename = paste(network, "_", samplesize, "_", rep, sep="")
-      test.data = get(load(paste("samples/", filename, "_test.rda", sep="")))
-      train.data = get(load(paste("samples/", filename, "_training.rda", sep="")))
-
-      for (p in 1:conf.trainingpermuts) {
-
-        cat("dag ", filename, "_p", p, "\n", sep = "")
-
-        truedag.result = rbind(truedag.result, data.frame(
-          network = network,
-          samplesize = samplesize,
-          rep = rep,
-          p = p,
-          nbnodes = length(truedag$nodes),
-          nbarcs = nrow(truedag$arcs),
-          bde.test = score(truedag, test.data, type = "bde", iss = 10),
-          bde.train = score(truedag, train.data, type = "bde", iss = 10),
-          bic.test = score(truedag, test.data, type = "bic", k = log(nrow(test.data))/2),
-          bic.train = score(truedag, train.data, type = "bic", k = log(nrow(train.data))/2)))
-
-        for (method in conf.pc.methods) {
-          for (search in conf.ss.methods) {
-            for (ci.test in conf.tests) {
-                
-                skeleton = get(load(paste("models/skeleton/", method, "/", ci.test, "/", filename, "_p", p, "_skeleton.rda", sep="")))
-                skeleton.time = get(load(paste("models/skeleton/", method, "/", ci.test, "/", filename, "_p", p, "_time.rda", sep="")))
-                
-                dag = get(load(paste("models/dag/", search, "/", method, "/", ci.test, "/", filename, "_p", p, "_dag.rda", sep="")))
-                dag.time = get(load(paste("models/dag/", search, "/", method, "/", ci.test, "/", filename, "_p", p, "_time.rda", sep="")))
-                
-                dag.result = rbind(dag.result, data.frame(
-                  method = method,
-                  search = search,
-                  network = network,
-                  samplesize = samplesize,
-                  rep = rep,
-                  p = p,
-                  constraint.nbarcs = nrow(skeleton$arcs),
-                  nbtests = skeleton$learning$ntests,
-                  nbscores = dag$learning$nscores,
-                  constraint.time.user = skeleton.time["user.self"],
-                  constraint.time.sys = skeleton.time["sys.self"],
-                  search.time.user = dag.time["user.self"],
-                  search.time.sys = dag.time["sys.self"],
-                  nbnodes = length(truedag$nodes),
-                  nbarcs = nrow(truedag$arcs),
-                  bde.test = score(dag, test.data, type = "bde", iss = 10),
-                  bde.train = score(dag, train.data, type = "bde", iss = 10),
-                  bic.test = score(dag, test.data, type = "bic", k = log(nrow(test.data))/2),
-                  bic.train = score(dag, train.data, type = "bic", k = log(nrow(train.data))/2),
-                  shd = shd(dag, truedag)))
+        filename = paste(network, "_", samplesize, "_", rep, sep="")
+        test.data = get(load(paste("samples/", filename, "_test.rda", sep="")))
+        train.data = get(load(paste("samples/", filename, "_training.rda", sep="")))
   
+        for (p in 1:conf.trainingpermuts) {
+  
+          cat("dag ", filename, "_p", p, "\n", sep = "")
+  
+          truedag.result = rbind(truedag.result, data.frame(
+            network = network,
+            samplesize = samplesize,
+            rep = rep,
+            p = p,
+            alpha = alpha,
+            nbnodes = length(truedag$nodes),
+            nbarcs = nrow(truedag$arcs),
+            bde.test = score(truedag, test.data, type = "bde", iss = 10),
+            bde.train = score(truedag, train.data, type = "bde", iss = 10),
+            bic.test = score(truedag, test.data, type = "bic", k = log(nrow(test.data))/2),
+            bic.train = score(truedag, train.data, type = "bic", k = log(nrow(train.data))/2)))
+  
+          for (method in conf.pc.methods) {
+            for (search in conf.ss.methods) {
+              for (ci.test in conf.tests) {
+                  
+                  skeleton = get(load(paste("models/skeleton/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep="")))
+                  skeleton.time = get(load(paste("models/skeleton/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep="")))
+                  
+                  dag = get(load(paste("models/dag/", search, "/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_dag.rda", sep="")))
+                  dag.time = get(load(paste("models/dag/", search, "/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep="")))
+                  
+                  dag.result = rbind(dag.result, data.frame(
+                    method = method,
+                    search = search,
+                    network = network,
+                    samplesize = samplesize,
+                    rep = rep,
+                    p = p,
+                    alpha = alpha,
+                    constraint.nbarcs = nrow(skeleton$arcs),
+                    nbtests = skeleton$learning$ntests,
+                    nbscores = dag$learning$nscores,
+                    constraint.time.user = skeleton.time["user.self"],
+                    constraint.time.sys = skeleton.time["sys.self"],
+                    search.time.user = dag.time["user.self"],
+                    search.time.sys = dag.time["sys.self"],
+                    nbnodes = length(truedag$nodes),
+                    nbarcs = nrow(truedag$arcs),
+                    bde.test = score(dag, test.data, type = "bde", iss = 10),
+                    bde.train = score(dag, train.data, type = "bde", iss = 10),
+                    bic.test = score(dag, test.data, type = "bic", k = log(nrow(test.data))/2),
+                    bic.train = score(dag, train.data, type = "bic", k = log(nrow(train.data))/2),
+                    shd = shd(dag, truedag)))
+    
+              }
             }
           }
         }
