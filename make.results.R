@@ -297,6 +297,11 @@ for (network in names(conf.networks)) {
   }
 }
 
+rownames(skeleton.node.result) = NULL
+rownames(skeleton.result) = NULL
+rownames(dag.result) = NULL
+rownames(truedag.result) = NULL
+
 save(skeleton.node.result, file="results/skeleton.node.result.rda")
 save(skeleton.result, file="results/skeleton.result.rda")
 save(dag.result, file="results/dag.result.rda")

@@ -1,33 +1,34 @@
-load("results/ug.node.result.rda")
-load("results/ug.result.rda")
+load("results/skeleton.node.result.rda")
+load("results/skeleton.result.rda")
 load("results/dag.result.rda")
+load("results/truedag.result.rda")
 
-make.samplesize.table = function(results, x) {
+make.samplesize.table = function(results, x, method) {
   
   detail = cbind(
         aggregate(
-          x = x[results$method == "hpc"] /
+          x = x[results$method == method] /
             x[results$method == "mmpc"],
-          by = list(results[results$method == "hpc", "network"],
-                    results[results$method == "hpc", "samplesize"]),
+          by = list(results[results$method == method, "network"],
+                    results[results$method == method, "samplesize"]),
           mean),
         y = aggregate(
-          x = x[results$method == "hpc"] /
+          x = x[results$method == method] /
             x[results$method == "mmpc"],
-          by = list(results[results$method == "hpc", "network"],
-                    results[results$method == "hpc", "samplesize"]),
+          by = list(results[results$method == method, "network"],
+                    results[results$method == method, "samplesize"]),
           sd)[, 3])
 
   average = cbind(
         x = aggregate(
-          x = x[results$method == "hpc"] /
+          x = x[results$method == method] /
             x[results$method == "mmpc"],
-          by = list(results[results$method == "hpc", "samplesize"]),
+          by = list(results[results$method == method, "samplesize"]),
           mean),
         y = aggregate(
-          x = x[results$method == "hpc"] /
+          x = x[results$method == method] /
             x[results$method == "mmpc"],
-          by = list(results[results$method == "hpc", "samplesize"]),
+          by = list(results[results$method == method, "samplesize"]),
           sd)[, 2])
   
   res = data.frame(
@@ -38,66 +39,74 @@ make.samplesize.table = function(results, x) {
   
   return(data.frame(
     "Network" = unique(res$net),
-    "SS. 50" = sprintf("%1.2f (\\(\\pm\\)%1.2f)", res[res$ss == "50", "mean"], res[res$ss == "50", "sd"]),
-    "SS. 100" = sprintf("%1.2f (\\(\\pm\\)%1.2f)", res[res$ss == "100", "mean"], res[res$ss == "100", "sd"]),
-    "SS. 200" = sprintf("%1.2f (\\(\\pm\\)%1.2f)", res[res$ss == "200", "mean"], res[res$ss == "200", "sd"]),
-    "SS. 500" = sprintf("%1.2f (\\(\\pm\\)%1.2f)", res[res$ss == "500", "mean"], res[res$ss == "500", "sd"]),
-    "SS. 1500" = sprintf("%1.2f (\\(\\pm\\)%1.2f)", res[res$ss == "1500", "mean"], res[res$ss == "1500", "sd"]),
-    "SS. 5000" = sprintf("%1.2f (\\(\\pm\\)%1.2f)", res[res$ss == "5000", "mean"], res[res$ss == "5000", "sd"])))    
+    "SS. 50" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "50", "mean"], res[res$ss == "50", "sd"]),
+    "SS. 100" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "100", "mean"], res[res$ss == "100", "sd"]),
+    "SS. 200" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "200", "mean"], res[res$ss == "200", "sd"]),
+    "SS. 500" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "500", "mean"], res[res$ss == "500", "sd"]),
+    "SS. 1500" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "1500", "mean"], res[res$ss == "1500", "sd"]),
+    "SS. 5000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "5000", "mean"], res[res$ss == "5000", "sd"])))    
 }
 
-table.samplesize.to.latex = function(table) {
+table.samplesize.to.latex = function(table, label, caption) {
   
   res = ""
-  res = paste(res, "\\begin{table}[H]\n", sep="")
-  res = paste(res, "\\begin{tabularx}{\\textwidth}{l X X X X X X X}\n", sep="")
-  res = paste(res, "\\hline\n", sep="")
-  res = paste(res, "\\multicolumn{1}{c}{\\multirow{2}{*}{Network}} & \\multicolumn{6}{c}{Sample size (SS)} \\\\ \\cline{2-7}\n", sep="")
-  res = paste(res, "\\multicolumn{1}{c}{} & 50 & 100 & 200 & 500 & 1500 & 5000 \\\\\n", sep="")
-  res = paste(res, "\\hline\n", sep="")
+  res = paste(res, "\\begin{table}\n", sep="")
+  res = paste(res, "  \\label{", label, "}\n", sep="")
+  res = paste(res, "  \\caption{", caption, "}\n", sep="")
+  res = paste(res, "  \\begin{tabularx}{\\textwidth}{l X X X X X X X}\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
+  res = paste(res, "  \\multicolumn{1}{c}{\\multirow{2}{*}{Network}} & \\multicolumn{6}{c}{Sample Size} \\\\ \\cline{2-7}\n", sep="")
+  res = paste(res, "  \\multicolumn{1}{c}{} & \\multicolumn{1}{c}{50} & \\multicolumn{1}{c}{100} & \\multicolumn{1}{c}{200} & \\multicolumn{1}{c}{500} & \\multicolumn{1}{c}{1500} & \\multicolumn{1}{c}{5000} \\\\\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
   for (i in 1:nrow(table)) {
-    res = paste(res, table[i, "Network"], sep="")
+    if(table[i, "Network"] == "all")
+      res = paste(res, "  \\hline\n", sep="")
+    res = paste(res, "  ", table[i, "Network"], sep="")
     for (col in names(table)[-1])
       res = paste(res, " & ", table[i, col], sep="")
     res = paste(res, " \\\\\n", sep="")
   }
-  res = paste(res, "\\hline\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
   res = paste(res, "\\end{tabularx}\n", sep="")
   res = paste(res, "\\end{table}\n", sep="")
   
   return(res)
 }
 
-table.datasets.to.latex = function(table) {
+table.datasets.to.latex = function(table, label, caption) {
   
   res = ""
-  res = paste(res, "\\begin{table}[H]\n", sep="")
-  res = paste(res, "\\begin{tabularx}{\\textwidth}{l X X X X}\n", sep="")
-  res = paste(res, "\\hline\n", sep="")
-  res = paste(res, "Network & Nb.vars & Nb.edges & Max. in/out degree & Domain range \\\\\n", sep="")
-  res = paste(res, "\\hline\n", sep="")
+  res = paste(res, "\\begin{table}\n", sep="")
+  res = paste(res, "  \\label{", label, "}\n", sep="")
+  res = paste(res, "  \\caption{", caption, "}\n", sep="")
+  res = paste(res, "  \\begin{tabularx}{\\textwidth}{l X X X X}\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
+  res = paste(res, "  Network & Nb.vars & Nb.edges & Max. in/out degree & Domain range \\\\\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
   for (i in 1:nrow(table)) {
-    res = paste(res, table[i, "Network"], sep="")
+    res = paste(res, "  ", table[i, "Network"], sep="")
     for (col in names(table)[c(2, 3, 4, 6)])
       res = paste(res, " & ", table[i, col], sep="")
     res = paste(res, " \\\\\n", sep="")
   }
-  res = paste(res, "\\hline\n", sep="")
-  res = paste(res, "\\end{tabularx}\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
+  res = paste(res, "  \\end{tabularx}\n", sep="")
   res = paste(res, "\n", sep="")
   res = paste(res, "\\end{table}\n", sep="")
-  res = paste(res, "\\begin{table}[H]\n", sep="")
-  res = paste(res, "\\begin{tabularx}{\\textwidth}{l X X X}\n", sep="")
-  res = paste(res, "\\hline\n", sep="")
-  res = paste(res, "Network & Min/med/max PC set & Min/med/max MB set & Min/med/max cont. table \\\\\n", sep="")
-  res = paste(res, "\\hline\n", sep="")
+  res = paste(res, "\\begin{table}\n", sep="")
+  res = paste(res, "  \\label{", label, "_2}\n", sep="")
+  res = paste(res, "  \\caption{", caption, "}\n", sep="")
+  res = paste(res, "  \\begin{tabularx}{\\textwidth}{l X X X}\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
+  res = paste(res, "  Network & Min/med/max PC set & Min/med/max MB set & Min/med/max cont. table \\\\\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
   for (i in 1:nrow(table)) {
-    res = paste(res, table[i, "Network"], sep="")
+    res = paste(res, "  ", table[i, "Network"], sep="")
     for (col in names(table)[c(5, 7, 8)])
       res = paste(res, " & ", table[i, col], sep="")
     res = paste(res, " \\\\\n", sep="")
   }
-  res = paste(res, "\\hline\n", sep="")
+  res = paste(res, "  \\hline\n", sep="")
   res = paste(res, "\\end{tabularx}\n", sep="")
   res = paste(res, "\\end{table}\n", sep="")
   
@@ -112,7 +121,7 @@ result.tables[["datasets"]] = data.frame(
       return(length(x$nodes))
     }, numeric(1)),
   "Num. edges" = vapply(conf.dags, function(x) {
-      return(length(x$arcs))
+      return(length(x$arcs)/2)
     }, numeric(1)),
   "Max In/Out degree" = vapply(conf.dags, function(x) {
     maxIn = max(vapply(x$nodes, function(y) {return(length(y$parents))}, numeric(1)))
@@ -148,48 +157,68 @@ result.tables[["datasets"]] = data.frame(
     return(paste(min(sizes), "/", median(sizes), "/", max(sizes), sep=""))
   }, character(1)))
 
-result.tables[["error"]] = make.samplesize.table(ug.result, ug.result[, "error"])
-result.tables[["recall"]] = make.samplesize.table(ug.result, ug.result[, "recall"])
-result.tables[["precision"]] = make.samplesize.table(ug.result, ug.result[, "precision"])
+method = "hpc-and"
+result.tables[["error"]] = make.samplesize.table(skeleton.result, skeleton.result[, "error"], method)
+result.tables[["recall"]] = make.samplesize.table(skeleton.result, skeleton.result[, "recall"], method)
+result.tables[["precision"]] = make.samplesize.table(skeleton.result, skeleton.result[, "precision"], method)
 
-result.tables[["bde.train"]] = make.samplesize.table(dag.result, dag.result[, "bde.train"])
-result.tables[["bic.train"]] = make.samplesize.table(dag.result, dag.result[, "bic.train"])
-result.tables[["bde.test"]] = make.samplesize.table(dag.result, dag.result[, "bde.test"])
-result.tables[["bic.test"]] = make.samplesize.table(dag.result, dag.result[, "bic.test"])
-result.tables[["shd"]] = make.samplesize.table(dag.result, dag.result[, "shd"])
-result.tables[["nbscores"]] = make.samplesize.table(dag.result, dag.result[, "nbscores"])
-result.tables[["nbtests"]] = make.samplesize.table(dag.result, dag.result[, "nbtests"])
-result.tables[["constraint.time"]] = make.samplesize.table(dag.result, dag.result[, "constraint.time.user"])
-result.tables[["search.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"])
-result.tables[["total.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"] + dag.result[, "constraint.time.user"])
+result.tables[["bde.train"]] = make.samplesize.table(dag.result, dag.result[, "bde.train"], method)
+result.tables[["bic.train"]] = make.samplesize.table(dag.result, dag.result[, "bic.train"], method)
+result.tables[["bde.test"]] = make.samplesize.table(dag.result, dag.result[, "bde.test"], method)
+result.tables[["bic.test"]] = make.samplesize.table(dag.result, dag.result[, "bic.test"], method)
+result.tables[["shd"]] = make.samplesize.table(dag.result, dag.result[, "shd"], method)
+result.tables[["nbscores"]] = make.samplesize.table(dag.result, dag.result[, "nbscores"], method)
+result.tables[["nbtests"]] = make.samplesize.table(dag.result, dag.result[, "nbtests"], method)
+result.tables[["constraint.time"]] = make.samplesize.table(dag.result, dag.result[, "constraint.time.user"], method)
+result.tables[["search.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"], method)
+result.tables[["total.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"] + dag.result[, "constraint.time.user"], method)
 
-sink("output.txt")
-cat("\ndatasets\n")
-cat(table.datasets.to.latex(result.tables$datasets))
-cat("\nnbtests\n")
-cat(table.samplesize.to.latex(result.tables$nbtests))
-cat("\nerror\n")
-cat(table.samplesize.to.latex(result.tables$error))
-cat("\nrecall\n")
-cat(table.samplesize.to.latex(result.tables$recall))
-cat("\nprecision\n")
-cat(table.samplesize.to.latex(result.tables$precision))
-cat("\nnbscores\n")
-cat(table.samplesize.to.latex(result.tables$nbscores))
-cat("\nbde.train\n")
-cat(table.samplesize.to.latex(result.tables$bde.train))
-cat("\nbic.train\n")
-cat(table.samplesize.to.latex(result.tables$bic.train))
-cat("\nbde.test\n")
-cat(table.samplesize.to.latex(result.tables$bde.test))
-cat("\nbic.test\n")
-cat(table.samplesize.to.latex(result.tables$bic.test))
-cat("\nshd\n")
-cat(table.samplesize.to.latex(result.tables$shd))
-cat("\nconstraint.time\n")
-cat(table.samplesize.to.latex(result.tables$constraint.time))
-cat("\nsearch.time\n")
-cat(table.samplesize.to.latex(result.tables$search.time))
-cat("\ntotal.time\n")
-cat(table.samplesize.to.latex(result.tables$total.time))
+sink("tables_hpc-and.tex")
+cat(table.datasets.to.latex(result.tables$datasets, "tab:datasets", "Datasets"))
+cat(table.samplesize.to.latex(result.tables$nbtests, "tab:nbtests", "Number of CI tests (constraint-based)"))
+cat(table.samplesize.to.latex(result.tables$error, "tab:error", "Skeleton error"))
+cat(table.samplesize.to.latex(result.tables$recall, "tab:recall", "Skeleton recall"))
+cat(table.samplesize.to.latex(result.tables$precision, "tab:precision", "Skeleton precision"))
+cat(table.samplesize.to.latex(result.tables$nbscores, "tab:nbscores", "Number of scores (search-and-score)"))
+cat(table.samplesize.to.latex(result.tables$bde.train, "tab:bde.train", "DBe score (train data)"))
+cat(table.samplesize.to.latex(result.tables$bic.train, "tab:bic.train", "BIC score (train data)"))
+cat(table.samplesize.to.latex(result.tables$bde.test, "tab:bde.test", "BDe score (test data)"))
+cat(table.samplesize.to.latex(result.tables$bic.test, "tab:bic.test", "BIC score (test data)"))
+cat(table.samplesize.to.latex(result.tables$shd, "tab:shd", "Structural Hamming Distance"))
+cat(table.samplesize.to.latex(result.tables$constraint.time, "tab:constraint.time", "Restriction time (constraint-based)"))
+cat(table.samplesize.to.latex(result.tables$search.time, "tab:search.time", "Maximization time (search-and-score)"))
+cat(table.samplesize.to.latex(result.tables$total.time, "tab:total.time", "Total time"))
+sink()
+
+method = "hpc"
+result.tables[["error"]] = make.samplesize.table(skeleton.result, skeleton.result[, "error"], method)
+result.tables[["recall"]] = make.samplesize.table(skeleton.result, skeleton.result[, "recall"], method)
+result.tables[["precision"]] = make.samplesize.table(skeleton.result, skeleton.result[, "precision"], method)
+
+result.tables[["bde.train"]] = make.samplesize.table(dag.result, dag.result[, "bde.train"], method)
+result.tables[["bic.train"]] = make.samplesize.table(dag.result, dag.result[, "bic.train"], method)
+result.tables[["bde.test"]] = make.samplesize.table(dag.result, dag.result[, "bde.test"], method)
+result.tables[["bic.test"]] = make.samplesize.table(dag.result, dag.result[, "bic.test"], method)
+result.tables[["shd"]] = make.samplesize.table(dag.result, dag.result[, "shd"], method)
+result.tables[["nbscores"]] = make.samplesize.table(dag.result, dag.result[, "nbscores"], method)
+result.tables[["nbtests"]] = make.samplesize.table(dag.result, dag.result[, "nbtests"], method)
+result.tables[["constraint.time"]] = make.samplesize.table(dag.result, dag.result[, "constraint.time.user"], method)
+result.tables[["search.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"], method)
+result.tables[["total.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"] + dag.result[, "constraint.time.user"], method)
+
+sink("tables_hpc-or.tex")
+cat(table.datasets.to.latex(result.tables$datasets, "tab:datasets", "Datasets"))
+cat(table.samplesize.to.latex(result.tables$nbtests, "tab:nbtests", "Number of CI tests (constraint-based)"))
+cat(table.samplesize.to.latex(result.tables$error, "tab:error", "Skeleton error"))
+cat(table.samplesize.to.latex(result.tables$recall, "tab:recall", "Skeleton recall"))
+cat(table.samplesize.to.latex(result.tables$precision, "tab:precision", "Skeleton precision"))
+cat(table.samplesize.to.latex(result.tables$nbscores, "tab:nbscores", "Number of scores (search-and-score)"))
+cat(table.samplesize.to.latex(result.tables$bde.train, "tab:bde.train", "DBe score (train data)"))
+cat(table.samplesize.to.latex(result.tables$bic.train, "tab:bic.train", "BIC score (train data)"))
+cat(table.samplesize.to.latex(result.tables$bde.test, "tab:bde.test", "BDe score (test data)"))
+cat(table.samplesize.to.latex(result.tables$bic.test, "tab:bic.test", "BIC score (test data)"))
+cat(table.samplesize.to.latex(result.tables$shd, "tab:shd", "Structural Hamming Distance"))
+cat(table.samplesize.to.latex(result.tables$constraint.time, "tab:constraint.time", "Restriction time (constraint-based)"))
+cat(table.samplesize.to.latex(result.tables$search.time, "tab:search.time", "Maximization time (search-and-score)"))
+cat(table.samplesize.to.latex(result.tables$total.time, "tab:total.time", "Total time"))
 sink()
