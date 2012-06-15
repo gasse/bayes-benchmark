@@ -7,15 +7,23 @@ for (target in names(conf.networks)) {
   for (size in conf.trainingsizes) {
     for (rep in 1:conf.trainingreps) {
       
-      filename = paste(target, "_", size, "_", rep, sep="")
+      filename = paste(target, "_", size, "_", rep, "_training", sep="")
 
-      cat("sampling ", filename, "\n", sep="")
+      cat(filename, "\n", sep="")
       
       training = gen.dataset.from.fitted.bn(conf.networks[[target]], size)
-      save(training, file=paste("samples/", filename, "_training.rda", sep=""))
+      save(training, file=paste("samples/", filename, ".rda", sep=""))
+    }
+  }
+  for (size in conf.trainingsizes) {
+    for (rep in 1:conf.trainingreps) {
+      
+      filename = paste(target, "_", size, "_", rep, "_test", sep="")
+      
+      cat(filename, "\n", sep="")
       
       test = gen.dataset.from.fitted.bn(conf.networks[[target]], conf.testsize)
-      save(test, file=paste("samples/", filename, "_test.rda", sep=""))
+      save(test, file=paste("samples/", filename, ".rda", sep=""))
     }
   }
 }
