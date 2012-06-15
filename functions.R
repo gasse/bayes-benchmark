@@ -346,7 +346,8 @@ learn.skeleton = function(params) {
                                   optimized = FALSE, strict = FALSE, undirected = TRUE),
                       "hpc-and" = hpc(x = training[, order], test = test, alpha = alpha,
                                       optimized = FALSE, strict = FALSE, undirected = TRUE,
-                                      nbr.join = "AND")
+                                      nbr.join = "AND"),
+                      "truedag" = bn.net(get(load(paste("./networks/", target, ".rda", sep=""))))
                       )
     ))
   
