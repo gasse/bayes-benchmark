@@ -1,7 +1,5 @@
-load("results/skeleton.node.result.rda")
-load("results/skeleton.result.rda")
-load("results/dag.result.rda")
-load("results/truedag.result.rda")
+source("conf.R")
+global.result = read.csv(file="./results/global.result.csv")
 
 make.samplesize.table = function(results, x, method) {
   
@@ -157,21 +155,26 @@ result.tables[["datasets"]] = data.frame(
     return(paste(min(sizes), "/", median(sizes), "/", max(sizes), sep=""))
   }, character(1)))
 
-method = "hpc-and"
-result.tables[["error"]] = make.samplesize.table(skeleton.result, skeleton.result[, "error"], method)
-result.tables[["recall"]] = make.samplesize.table(skeleton.result, skeleton.result[, "recall"], method)
-result.tables[["precision"]] = make.samplesize.table(skeleton.result, skeleton.result[, "precision"], method)
 
-result.tables[["bde.train"]] = make.samplesize.table(dag.result, dag.result[, "bde.train"], method)
-result.tables[["bic.train"]] = make.samplesize.table(dag.result, dag.result[, "bic.train"], method)
-result.tables[["bde.test"]] = make.samplesize.table(dag.result, dag.result[, "bde.test"], method)
-result.tables[["bic.test"]] = make.samplesize.table(dag.result, dag.result[, "bic.test"], method)
-result.tables[["shd"]] = make.samplesize.table(dag.result, dag.result[, "shd"], method)
-result.tables[["nbscores"]] = make.samplesize.table(dag.result, dag.result[, "nbscores"], method)
-result.tables[["nbtests"]] = make.samplesize.table(dag.result, dag.result[, "nbtests"], method)
-result.tables[["constraint.time"]] = make.samplesize.table(dag.result, dag.result[, "constraint.time.user"], method)
-result.tables[["search.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"], method)
-result.tables[["total.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"] + dag.result[, "constraint.time.user"], method)
+tmp.res = global.result
+tmp.res = tmp.res[tmp.res[, "alpha"] == 0.05, ]
+tmp.res = tmp.res[tmp.res[, "network"] %in% names(conf.networks), ]
+
+method = "hpc-and"
+result.tables[["error"]] = make.samplesize.table(tmp.res, tmp.res[, "error"], method)
+result.tables[["recall"]] = make.samplesize.table(tmp.res, tmp.res[, "recall"], method)
+result.tables[["precision"]] = make.samplesize.table(tmp.res, tmp.res[, "precision"], method)
+
+result.tables[["bde.train"]] = make.samplesize.table(tmp.res, tmp.res[, "bde.train"], method)
+result.tables[["bic.train"]] = make.samplesize.table(tmp.res, tmp.res[, "bic.train"], method)
+result.tables[["bde.test"]] = make.samplesize.table(tmp.res, tmp.res[, "bde.test"], method)
+result.tables[["bic.test"]] = make.samplesize.table(tmp.res, tmp.res[, "bic.test"], method)
+result.tables[["shd"]] = make.samplesize.table(tmp.res, tmp.res[, "shd"], method)
+result.tables[["nbscores"]] = make.samplesize.table(tmp.res, tmp.res[, "nbscores"], method)
+result.tables[["nbtests"]] = make.samplesize.table(tmp.res, tmp.res[, "nbtests"], method)
+result.tables[["constraint.time"]] = make.samplesize.table(tmp.res, tmp.res[, "constraint.time.user"], method)
+result.tables[["search.time"]] = make.samplesize.table(tmp.res, tmp.res[, "search.time.user"], method)
+result.tables[["total.time"]] = make.samplesize.table(tmp.res, tmp.res[, "search.time.user"] + tmp.res[, "constraint.time.user"], method)
 
 sink("tables_hpc-and.tex")
 cat(table.datasets.to.latex(result.tables$datasets, "tab:datasets", "Datasets"))
@@ -191,20 +194,20 @@ cat(table.samplesize.to.latex(result.tables$total.time, "tab:total.time", "Total
 sink()
 
 method = "hpc"
-result.tables[["error"]] = make.samplesize.table(skeleton.result, skeleton.result[, "error"], method)
-result.tables[["recall"]] = make.samplesize.table(skeleton.result, skeleton.result[, "recall"], method)
-result.tables[["precision"]] = make.samplesize.table(skeleton.result, skeleton.result[, "precision"], method)
+result.tables[["error"]] = make.samplesize.table(tmp.res, tmp.res[, "error"], method)
+result.tables[["recall"]] = make.samplesize.table(tmp.res, tmp.res[, "recall"], method)
+result.tables[["precision"]] = make.samplesize.table(tmp.res, tmp.res[, "precision"], method)
 
-result.tables[["bde.train"]] = make.samplesize.table(dag.result, dag.result[, "bde.train"], method)
-result.tables[["bic.train"]] = make.samplesize.table(dag.result, dag.result[, "bic.train"], method)
-result.tables[["bde.test"]] = make.samplesize.table(dag.result, dag.result[, "bde.test"], method)
-result.tables[["bic.test"]] = make.samplesize.table(dag.result, dag.result[, "bic.test"], method)
-result.tables[["shd"]] = make.samplesize.table(dag.result, dag.result[, "shd"], method)
-result.tables[["nbscores"]] = make.samplesize.table(dag.result, dag.result[, "nbscores"], method)
-result.tables[["nbtests"]] = make.samplesize.table(dag.result, dag.result[, "nbtests"], method)
-result.tables[["constraint.time"]] = make.samplesize.table(dag.result, dag.result[, "constraint.time.user"], method)
-result.tables[["search.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"], method)
-result.tables[["total.time"]] = make.samplesize.table(dag.result, dag.result[, "search.time.user"] + dag.result[, "constraint.time.user"], method)
+result.tables[["bde.train"]] = make.samplesize.table(tmp.res, tmp.res[, "bde.train"], method)
+result.tables[["bic.train"]] = make.samplesize.table(tmp.res, tmp.res[, "bic.train"], method)
+result.tables[["bde.test"]] = make.samplesize.table(tmp.res, tmp.res[, "bde.test"], method)
+result.tables[["bic.test"]] = make.samplesize.table(tmp.res, tmp.res[, "bic.test"], method)
+result.tables[["shd"]] = make.samplesize.table(tmp.res, tmp.res[, "shd"], method)
+result.tables[["nbscores"]] = make.samplesize.table(tmp.res, tmp.res[, "nbscores"], method)
+result.tables[["nbtests"]] = make.samplesize.table(tmp.res, tmp.res[, "nbtests"], method)
+result.tables[["constraint.time"]] = make.samplesize.table(tmp.res, tmp.res[, "constraint.time.user"], method)
+result.tables[["search.time"]] = make.samplesize.table(tmp.res, tmp.res[, "search.time.user"], method)
+result.tables[["total.time"]] = make.samplesize.table(tmp.res, tmp.res[, "search.time.user"] + tmp.res[, "constraint.time.user"], method)
 
 sink("tables_hpc-or.tex")
 cat(table.datasets.to.latex(result.tables$datasets, "tab:datasets", "Datasets"))

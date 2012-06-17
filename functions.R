@@ -347,7 +347,7 @@ learn.skeleton = function(params) {
                       "hpc-and" = hpc(x = training[, order], test = test, alpha = alpha,
                                       optimized = FALSE, strict = FALSE, undirected = TRUE,
                                       nbr.join = "AND"),
-                      "truedag" = bn.net(get(load(paste("./networks/", target, ".rda", sep=""))))
+                      "truedag" = skeleton(bn.net(get(load(paste("./networks/", target, ".rda", sep="")))))
                       )
     ))
   

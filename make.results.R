@@ -13,7 +13,8 @@ skeleton.node.result = data.frame(
   time.user = vector(),
   time.sys = vector(),
   nbnodes = vector(),
-  nbarcs = vector(),
+  nbarcs.skel = vector(),
+  nbarcs.true = vector(),
   tp = vector(),
   tn = vector(),
   fp = vector(),
@@ -34,7 +35,8 @@ skeleton.result = data.frame(
   time.user = vector(),
   time.sys = vector(),
   nbnodes = vector(),
-  nbarcs = vector(),
+  nbarcs.skel = vector(),
+  nbarcs.true = vector(),
   tp = vector(),
   tn = vector(),
   fp = vector(),
@@ -60,7 +62,7 @@ dag.result = data.frame(
   search.time.user = vector(),
   search.time.sys = vector(),
   nbnodes = vector(),
-  nbarcs = vector(),
+  nbarcs.true = vector(),
   bde = vector(),
   bic = vector(),
   shd = vector())
@@ -219,7 +221,8 @@ for (network in names(conf.networks)) {
                 nbnodes = nbnodes,
                 time.user = time["user.self"],
                 time.sys = time["sys.self"],
-                nbarcs = nrow(truedag$arcs),
+                nbarcs.skel = nrow(skeleton$arcs) / 2, # because the graph is undirected, each arcs is counetd twice
+                nbarcs.true = nrow(truedag$arcs),
                 tp = tp,
                 tn = tn,
                 fp = fp,
@@ -292,7 +295,7 @@ for (network in names(conf.networks)) {
                     search.time.user = dag.time["user.self"],
                     search.time.sys = dag.time["sys.self"],
                     nbnodes = length(truedag$nodes),
-                    nbarcs = nrow(truedag$arcs),
+                    nbarcs.true = nrow(truedag$arcs),
                     bde.test = score(dag, test.data, type = "bde", iss = 10),
                     bde.train = score(dag, train.data, type = "bde", iss = 10),
                     bic.test = score(dag, test.data, type = "bic", k = log(nrow(test.data))/2),
@@ -317,6 +320,31 @@ save(skeleton.node.result, file="results/skeleton.node.result.rda")
 save(skeleton.result, file="results/skeleton.result.rda")
 save(dag.result, file="results/dag.result.rda")
 save(truedag.result, file="results/truedag.result.rda")
+
+global.result = cbind(dag.result, data.frame(
+  "nbarcs.skel" = rep(NA, nrow(dag.result)),
+  "tp" = rep(NA, nrow(dag.result)),
+  "tn" = rep(NA, nrow(dag.result)),
+  "fp" = rep(NA, nrow(dag.result)),
+  "fn" = rep(NA, nrow(dag.result)),
+  "recall" = rep(NA, nrow(dag.result)),
+  "precision" = rep(NA, nrow(dag.result)),
+  "error" = rep(NA, nrow(dag.result)),
+  "specificity" = rep(NA, nrow(dag.result))))
+
+for (search in unique(dag.result$search)) {
+  global.result[global.result$search == search, "nbarcs.skel"] = skeleton.result[, "nbarcs.skel"]
+  global.result[global.result$search == search, "tp"] = skeleton.result[, "tp"]
+  global.result[global.result$search == search, "tn"] = skeleton.result[, "tn"]
+  global.result[global.result$search == search, "fp"] = skeleton.result[, "fp"]
+  global.result[global.result$search == search, "fn"] = skeleton.result[, "fn"]
+  global.result[global.result$search == search, "recall"] = skeleton.result[, "recall"]
+  global.result[global.result$search == search, "precision"] = skeleton.result[, "precision"]
+  global.result[global.result$search == search, "error"] = skeleton.result[, "error"]
+  global.result[global.result$search == search, "specificity"] = skeleton.result[, "specificity"]
+}
+
+write.csv(global.result, file="./results/global.result.csv")
 
 # Check the results
 #aggregate(skeleton.node.result$network, list(skeleton.node.result$network, skeleton.node.result$method, skeleton.node.result$samplesize), length)

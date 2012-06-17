@@ -49,10 +49,10 @@ for (network in c("alarm", "alarm3", "alarm5", "alarm10",
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(1000, 10000) # c(50, 100, 200, 500, 1500, 5000)
-conf.pc.methods = c("truedag")# c("mmpc", "hpc", "hpc-and", "truedag")
+conf.trainingsizes =  c(1000, 10000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
+conf.pc.methods = c("mmpc", "hpc", "hpc-and")# c("mmpc", "hpc", "hpc-and") c("truedag")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
-conf.alphas = c(0) # c(0.01, 0.02, 0.05)
+conf.alphas = c(0.01, 0.02, 0.05) # c(0) c(0.01, 0.02, 0.05)
 conf.trainingreps = 10
 conf.trainingpermuts = 1
 conf.testsize = 10

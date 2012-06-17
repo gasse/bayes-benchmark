@@ -1,28 +1,7 @@
-load("results/skeleton.node.result.rda")
-load("results/skeleton.result.rda")
-load("results/dag.result.rda")
-load("results/truedag.result.rda")
+source("conf.R")
 
-global.result = cbind(dag.result, data.frame(
-  "tp" = rep(NA, nrow(dag.result)),
-  "tn" = rep(NA, nrow(dag.result)),
-  "fp" = rep(NA, nrow(dag.result)),
-  "fn" = rep(NA, nrow(dag.result)),
-  "recall" = rep(NA, nrow(dag.result)),
-  "precision" = rep(NA, nrow(dag.result)),
-  "error" = rep(NA, nrow(dag.result)),
-  "specificity" = rep(NA, nrow(dag.result))))
-
-for (search in unique(dag.result$search)) {
-  global.result[global.result$search == search, "tp"] = skeleton.result[, "tp"]
-  global.result[global.result$search == search, "tn"] = skeleton.result[, "tn"]
-  global.result[global.result$search == search, "fp"] = skeleton.result[, "fp"]
-  global.result[global.result$search == search, "fn"] = skeleton.result[, "fn"]
-  global.result[global.result$search == search, "recall"] = skeleton.result[, "recall"]
-  global.result[global.result$search == search, "precision"] = skeleton.result[, "precision"]
-  global.result[global.result$search == search, "error"] = skeleton.result[, "error"]
-  global.result[global.result$search == search, "specificity"] = skeleton.result[, "specificity"]
-}
+load(file="./results/truedag.result.rda")
+global.result = read.csv(file="./results/global.result.csv")
 
 pc.plot = function(res, x, y, seps, color = "red", pch = 3, lty = 1) {
   if (length(seps) > 0) {
@@ -84,10 +63,11 @@ pc.boxplot.imp = function(x, y, xlab, ylab, color) {
 
 #-------------------------------------------------------------------------------
 
-folder = "figures"
-disp.pars = list(cex = 1.4)
+disp.pars.png = list(cex = 1.4)
+disp.pars.eps = list(cex = 1.4, las=2, oma=c(0, 0, 0, 0))
 #list(oma=c(0, 0, 0, 0), mar=c(3, 2, 0.5, 0.5) + 0.1, cex = 1.3, mgp = c(1.7, 0.5, 0))
 
+folder = "figures"
 for(target in c(names(conf.networks), "all")) {
   # c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link", "all")
   
@@ -103,6 +83,7 @@ for(target in c(names(conf.networks), "all")) {
   #res_disp = skeleton.node.result
   res_disp = global.result
   res_disp = res_disp[res_disp$network %in% networks, ]
+  res_disp = res_disp[res_disp$alpha %in% 0.05, ]
   #res_disp = res_disp[res_disp$samplesize %in% 5000, ] #c("50", "100", "200", "500", "1500", "5000")
   #res_disp = res_disp[res_disp$rep %in% c(1:5), ]
   
@@ -123,35 +104,35 @@ for(target in c(names(conf.networks), "all")) {
   
   yaxises = list()
   
-  ylab = "Skeleton Euclidian distance"; measure = "skel_error"; y = res_disp[, "error"]
+  ylab = "Euclidian distance"; measure = "skel_error"; y = res_disp[, "error"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, sqrt(2))
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Skeleton Recall"; measure = "skel_recall"; y = res_disp[, "recall"]
+  ylab = "Recall"; measure = "skel_recall"; y = res_disp[, "recall"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Skeleton Precision"; measure = "skel_precision"; y = res_disp[, "precision"]
+  ylab = "Precision"; measure = "skel_precision"; y = res_disp[, "precision"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Skeleton Specificity"; measure = "skel_specificity"; y = res_disp[, "specificity"]
+  ylab = "Specificity"; measure = "skel_specificity"; y = res_disp[, "specificity"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Skeleton False positive rate"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
+  ylab = "False positive rate"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Skeleton False negative rate"; measure = "skel_fnr"; y = 1 - res_disp[, "recall"]
+  ylab = "False negative rate"; measure = "skel_fnr"; y = 1 - res_disp[, "recall"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Constraint time"; measure = "time_constraint"; y = res_disp[, "constraint.time.user"]
+  ylab = "Restriction time (CB)"; measure = "time_constraint"; y = res_disp[, "constraint.time.user"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Search time"; measure = "time_search"; y = res_disp[, "search.time.user"]
+  ylab = "Maximisation time (SS)"; measure = "time_search"; y = res_disp[, "search.time.user"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
@@ -159,7 +140,7 @@ for(target in c(names(conf.networks), "all")) {
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Number of statistical tests"; measure = "nbtests"; y = res_disp[, "nbtests"]
+  ylab = "Number of CI tests"; measure = "nbtests"; y = res_disp[, "nbtests"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
@@ -218,71 +199,81 @@ for(target in c(names(conf.networks), "all")) {
     cat(target, ylab, "\n")
     
     #-------------------------------------------------------------------------------
-    
-    png(paste(folder, "/", file, "_all_", measure, ".png", sep=""))
-    par(disp.pars)
-    plot(rep(ylim[1]-ylim[2], length(x)) ~ x,
-         type = "n",
-         ylim=ylim,
-         xlab=xlab,
-         ylab="measure"
-    #     ylab=""
-    )
-    title(ylab)
 
-    if (!is.null(y_truedag) && !is.null(x_truedag)) {
-      pc.plot(res = truedag.result, x_truedag, y_truedag, color = "black", pch = 3, lty = 2, seps = list())
-    }
-    
-    # hpc
-    pc.plot(res = res_disp, x, y, color = "blue", pch = 0, seps = list(
-      method = "hpc"
-    #  ,search = "tabu"
-    #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
-    #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
-    #  ,p = 1:5
-    ))
-    
-    # hpc-and
-    pc.plot(res = res_disp, x, y, color = "darkgreen", pch = 1, seps = list(
-      method = "hpc-and"
+    graph.plot.all = function() {
+      
+      plot(rep(ylim[1]-ylim[2], length(x)) ~ x,
+           type = "n",
+           ylim=ylim,
+           xlab=xlab,
+           ylab="measure"
+      #     ylab=""
+      )
+      title(ylab)
+  
+      if (!is.null(y_truedag) && !is.null(x_truedag)) {
+        pc.plot(res = truedag.result, x_truedag, y_truedag, color = "black", pch = 3, lty = 2, seps = list())
+      }
+      
+      # hpc
+  #     pc.plot(res = res_disp, x, y, color = "blue", pch = 0, seps = list(
+  #       method = "hpc"
+  #     #  ,search = "tabu"
+  #     #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
+  #     #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
+  #     #  ,p = 1:5
+  #     ))
+      
+      # hpc-and
+      pc.plot(res = res_disp, x, y, color = "darkgreen", pch = 1, seps = list(
+        method = "hpc-and"
+        #  ,search = "tabu"
+        #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
+        #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
+        #  ,p = 1:5
+        ))
+      
+  #     # 2npc
+  #     pc.plot(res = res_disp, x, y, color = "darkmagenta", pch = 1, seps = list(
+  #       method = "2npc"
+  #       #  ,search = "tabu"
+  #       #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
+  #       #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
+  #       #  ,p = 1:5
+  #       ))
+      
+      # mmpc
+      pc.plot(res = res_disp, x, y, color = "red", pch = 2, seps = list(
+        method = "mmpc"
       #  ,search = "tabu"
       #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
       #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
       #  ,p = 1:5
       ))
+    }
     
-#     # 2npc
-#     pc.plot(res = res_disp, x, y, color = "darkmagenta", pch = 1, seps = list(
-#       method = "2npc"
-#       #  ,search = "tabu"
-#       #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
-#       #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
-#       #  ,p = 1:5
-#       ))
+    png(paste(folder, "/", file, "_all_", measure, ".png", sep=""))
+    par(disp.pars.png)
+    graph.plot.all()
+    dev.off()
     
-    # mmpc
-    pc.plot(res = res_disp, x, y, color = "red", pch = 2, seps = list(
-      method = "mmpc"
-    #  ,search = "tabu"
-    #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
-    #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
-    #  ,p = 1:5
-    ))
-    
+    postscript(paste(folder, "/", file, "_all_", measure, ".eps", sep=""),
+               horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+    par(disp.pars.eps)
+    graph.plot.all()
     dev.off()
     
     # Raw boxplot (hpc)
-    png(paste(folder, "/", file, "_hpc_", measure, ".png", sep=""))
-    par(disp.pars)
-    by = y[res_disp[, "method"] == "hpc"]
-    bx = x[res_disp[, "method"] == "hpc"]
-    pc.boxplot(bx, by, xlab, ylab, color = "blue")
-    dev.off()
+#     png(paste(folder, "/", file, "_hpc-or_", measure, ".png", sep=""))
+#     par(disp.pars.png)
+#     by = y[res_disp[, "method"] == "hpc"]
+#     bx = x[res_disp[, "method"] == "hpc"]
+#     pc.boxplot(bx, by, xlab, ylab, color = "blue")
+#     dev.off()
     
     # Raw boxplot (hpc-and)
     png(paste(folder, "/", file, "_hpc-and_", measure, ".png", sep=""))
-    par(disp.pars)
+    par(disp.pars.png)
     by = y[res_disp[, "method"] == "hpc-and"]
     bx = x[res_disp[, "method"] == "hpc-and"]
     pc.boxplot(bx, by, xlab, ylab, color = "darkgreen")
@@ -290,7 +281,7 @@ for(target in c(names(conf.networks), "all")) {
     
 #     # Raw boxplot (2npc)
 #     png(paste(folder, "/", file, "_2npc_", measure, ".png", sep=""))
-#     par(disp.pars)
+#     par(disp.pars.png)
 #     by = y[res_disp[, "method"] == "2npc"]
 #     bx = x[res_disp[, "method"] == "2npc"]
 #     pc.boxplot(bx, by, xlab, ylab, color = "darkmagenta")
@@ -298,23 +289,31 @@ for(target in c(names(conf.networks), "all")) {
     
     # Raw boxplot (mmpc)
     png(paste(folder, "/", file, "_mmpc_", measure, ".png", sep=""))
-    par(disp.pars)
+    par(disp.pars.png)
     by = y[res_disp[, "method"] == "mmpc"]
     bx = x[res_disp[, "method"] == "mmpc"]
     pc.boxplot(bx, by, xlab, ylab, color = "red")
     dev.off()
     
     # Improvement boxplot (hpc)
-    png(paste(folder, "/", file, "_ratio_hpc_", measure, ".png", sep=""))
-    par(disp.pars)
-    by = (y[res_disp[, "method"] == "hpc"] / y[res_disp[, "method"] == "mmpc"] - 1)
-    bx = x[res_disp[, "method"] == "hpc"]
-    pc.boxplot.imp(bx, by, xlab, ylab, "dodgerblue4")
-    dev.off()
+#     png(paste(folder, "/", file, "_ratio_hpc-or_", measure, ".png", sep=""))
+#     par(disp.pars.png)
+#     by = (y[res_disp[, "method"] == "hpc"] / y[res_disp[, "method"] == "mmpc"] - 1)
+#     bx = x[res_disp[, "method"] == "hpc"]
+#     pc.boxplot.imp(bx, by, xlab, ylab, "dodgerblue4")
+#     dev.off()
     
     # Improvement boxplot (hpc-and)
     png(paste(folder, "/", file, "_ratio_hpc-and_", measure, ".png", sep=""))
-    par(disp.pars)
+    par(disp.pars.png)
+    by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"] - 1)
+    bx = x[res_disp[, "method"] == "hpc-and"]
+    pc.boxplot.imp(bx, by, xlab, ylab, "forestgreen")
+    dev.off()
+    
+    postscript(paste(folder, "/", file, "_ratio_hpc-and_", measure, ".eps", sep=""),
+               horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+    par(disp.pars.eps)
     by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"] - 1)
     bx = x[res_disp[, "method"] == "hpc-and"]
     pc.boxplot.imp(bx, by, xlab, ylab, "forestgreen")
@@ -322,7 +321,7 @@ for(target in c(names(conf.networks), "all")) {
     
 #     # Improvement boxplot (2npc)
 #     png(paste(folder, "/", file, "_ratio_2npc_", measure, ".png", sep=""))
-#     par(disp.pars)
+#     par(disp.pars.png)
 #     by = (y[res_disp[, "method"] == "2npc"] / y[res_disp[, "method"] == "mmpc"] - 1)
 #     bx = x[res_disp[, "method"] == "2npc"]
 #     pc.boxplot.imp(bx, by, xlab, ylab, "deeppink4")
