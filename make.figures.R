@@ -46,24 +46,24 @@ pc.boxplot.imp = function(x, y, xlab, ylab, color) {
   boxplot(y ~ x,
           xlab = xlab,
           #          xlab="",
-          ylab = "evolution ratio",
+          ylab = "increase factor",
 #          ylab = "",
           border = color,
           boxwex = 0.5,
-          ylim = c(min(0, min(ifelse(by == Inf, NA, by), na.rm=TRUE)), max(0, max(ifelse(by == Inf, NA, by), na.rm=TRUE)))
+          ylim = c(min(1, min(ifelse(by == Inf, NA, by), na.rm=TRUE)), max(1, max(ifelse(by == Inf, NA, by), na.rm=TRUE)))
 #          at = aggregate(bx, list(bx), mean)[, "x"],
 #          add = TRUE)
   )
   title(ylab)
   grid(nx = NA, ny = NULL)
-  lines(c(0, length(levels(factor(x))) + 1), c(0, 0), type = "l", lty = "solid", col = "red")
+  lines(c(0, length(levels(factor(x))) + 1), c(1, 1), type = "l", lty = "solid", col = "red")
   points(aggregate(y, list(factor(x)), mean), pch = 16)
   lines(aggregate(y, list(factor(x)), mean), type = "l")
 }
 
 #-------------------------------------------------------------------------------
 
-disp.pars.png = list(cex = 1.4)
+disp.pars.png = list(cex = 1.4, lwd = 1.2, las=2, oma=c(0, 0, 0, 0))
 disp.pars.eps = list(cex = 1.4, las=2, oma=c(0, 0, 0, 0))
 #list(oma=c(0, 0, 0, 0), mar=c(3, 2, 0.5, 0.5) + 0.1, cex = 1.3, mgp = c(1.7, 0.5, 0))
 
@@ -83,6 +83,7 @@ for(target in c(names(conf.networks), "all")) {
   #res_disp = skeleton.node.result
   res_disp = global.result
   res_disp = res_disp[res_disp$network %in% networks, ]
+  res_disp = res_disp[res_disp$method %in% conf.pc.methods, ]
   res_disp = res_disp[res_disp$alpha %in% 0.05, ]
   #res_disp = res_disp[res_disp$samplesize %in% 5000, ] #c("50", "100", "200", "500", "1500", "5000")
   #res_disp = res_disp[res_disp$rep %in% c(1:5), ]
@@ -104,27 +105,27 @@ for(target in c(names(conf.networks), "all")) {
   
   yaxises = list()
   
-  ylab = "Euclidian distance"; measure = "skel_error"; y = res_disp[, "error"]
+  ylab = "Euclidian distance\n(lower is better)"; measure = "skel_error"; y = res_disp[, "error"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, sqrt(2))
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Recall"; measure = "skel_recall"; y = res_disp[, "recall"]
+  ylab = "Recall\n(higher is better)"; measure = "skel_recall"; y = res_disp[, "recall"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Precision"; measure = "skel_precision"; y = res_disp[, "precision"]
+  ylab = "Precision\n(higher is better)"; measure = "skel_precision"; y = res_disp[, "precision"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Specificity"; measure = "skel_specificity"; y = res_disp[, "specificity"]
+  ylab = "Specificity\n(higher is better)"; measure = "skel_specificity"; y = res_disp[, "specificity"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "False positive rate"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
+  ylab = "False potisive rate\n(lower is better)"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "False negative rate"; measure = "skel_fnr"; y = 1 - res_disp[, "recall"]
+  ylab = "Fales negative rate\n(lower is better)"; measure = "skel_fnr"; y = 1 - res_disp[, "recall"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
@@ -148,11 +149,11 @@ for(target in c(names(conf.networks), "all")) {
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "SHD"; measure = "score_SHD"; y = res_disp[, "shd"]
+  ylab = "Strustural Hamming Distance\n(lower is better)"; measure = "score_SHD"; y = res_disp[, "shd"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "BDe on train data"; measure = "score_BDe_train"; y = res_disp[, "bde.train"]
+  ylab = "BDe on train data\n(lower is better)"; measure = "score_BDe_train"; y = res_disp[, "bde.train"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.train"]
   if (!is.null(x_truedag)) {
@@ -161,7 +162,7 @@ for(target in c(names(conf.networks), "all")) {
   }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  ylab = "BIC on train data"; measure = "score_BIC_train"; y = res_disp[, "bic.train"]
+  ylab = "BIC on train data\n(lower is better)"; measure = "score_BIC_train"; y = res_disp[, "bic.train"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.train"]
   if (!is.null(x_truedag)) {
@@ -170,7 +171,7 @@ for(target in c(names(conf.networks), "all")) {
   }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  ylab = "BDe on test data"; measure = "score_BDe_test"; y = res_disp[, "bde.test"]
+  ylab = "BDe on test data\n(lower is better)"; measure = "score_BDe_test"; y = res_disp[, "bde.test"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.test"]
   if (!is.null(x_truedag)) {
@@ -179,7 +180,7 @@ for(target in c(names(conf.networks), "all")) {
   }
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  ylab = "BIC on test data"; measure = "score_BIC_test"; y = res_disp[, "bic.test"]
+  ylab = "BIC on test data\n(lower is better)"; measure = "score_BIC_test"; y = res_disp[, "bic.test"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.test"]
   if (!is.null(x_truedag)) {
@@ -196,7 +197,7 @@ for(target in c(names(conf.networks), "all")) {
     ylim = axis$ylim
     y_truedag = axis$y_truedag
     
-    cat(target, ylab, "\n")
+    cat(target, measure, "\n")
     
     #-------------------------------------------------------------------------------
 
@@ -306,7 +307,7 @@ for(target in c(names(conf.networks), "all")) {
     # Improvement boxplot (hpc-and)
     png(paste(folder, "/", file, "_ratio_hpc-and_", measure, ".png", sep=""))
     par(disp.pars.png)
-    by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"] - 1)
+    by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"])
     bx = x[res_disp[, "method"] == "hpc-and"]
     pc.boxplot.imp(bx, by, xlab, ylab, "forestgreen")
     dev.off()
@@ -314,7 +315,7 @@ for(target in c(names(conf.networks), "all")) {
     postscript(paste(folder, "/", file, "_ratio_hpc-and_", measure, ".eps", sep=""),
                horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
     par(disp.pars.eps)
-    by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"] - 1)
+    by = (y[res_disp[, "method"] == "hpc-and"] / y[res_disp[, "method"] == "mmpc"])
     bx = x[res_disp[, "method"] == "hpc-and"]
     pc.boxplot.imp(bx, by, xlab, ylab, "forestgreen")
     dev.off()

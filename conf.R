@@ -42,20 +42,18 @@ conf.dags = list()
 # "insurance", "insurance3", "insurance5", "insurance10",
 # "child", "child3", "child5", "child10"
 
-for (network in c("alarm", "alarm3", "alarm5", "alarm10",
-                  "insurance", "insurance3", "insurance5", "insurance10",
-                  "child", "child3", "child5", "child10")) {
+for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")) {
   conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(1000, 10000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
-conf.pc.methods = c("mmpc", "hpc", "hpc-and")# c("mmpc", "hpc", "hpc-and") c("truedag")
+conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
+conf.pc.methods = c("hpc-and", "mmpc")# c("mmpc", "hpc", "hpc-and") c("truedag")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
-conf.alphas = c(0.01, 0.02, 0.05) # c(0) c(0.01, 0.02, 0.05)
+conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 10
 conf.trainingpermuts = 1
-conf.testsize = 10
+conf.testsize = 10000
 conf.seed = 1596841
 conf.nbcores = 4
 
