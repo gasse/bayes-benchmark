@@ -54,11 +54,7 @@ dag.result = data.frame(
   rep = vector(),
   p = vector(),
   alpha = vector(),
-  constraint.nbarcs = vector(),
-  nbtests = vector(),
   nbscores = vector(),
-  constraint.time.user = vector(),
-  constraint.time.sys = vector(),
   search.time.user = vector(),
   search.time.sys = vector(),
   nbnodes = vector(),
@@ -159,6 +155,8 @@ truedag.result = data.frame(
 for (network in names(conf.networks)) {
 
   truedag = conf.dags[[network]]
+  nbnodes = length(truedag$nodes)
+  nbarcs.true = nrow(truedag$arcs)
 
   for (samplesize in conf.trainingsizes) {
     for (rep in 1:conf.trainingreps) {
@@ -168,7 +166,7 @@ for (network in names(conf.networks)) {
           filename = paste(network, "_", samplesize, "_", rep, "_p", p, sep="")
           cat("skeleton", filename, "\n")
           
-          for (method in conf.pc.methods) {
+          for (method in setdiff(conf.pc.methods, "none")) {
             for (test in conf.tests) {
               
               skeleton = get(load(paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_skeleton.rda", sep="")))
@@ -201,7 +199,6 @@ for (network in names(conf.networks)) {
                 }
               }
               
-              nbnodes = length(truedag$nodes)
               tn = nbnodes * (nbnodes - 1) - tp - fn - fp
               
               recall = ifelse(fn == 0, 1, tp / (tp + fn)) # Couverture d'arcs (1=tous 0=aucun)
@@ -209,7 +206,7 @@ for (network in names(conf.networks)) {
               error = sqrt((1 - recall)^2 + (1 - precision)^2)
               
               specificity = ifelse(fp == 0, 1, tn / (tn + fp)) # Couverture des non-arcs (1=tous 0=aucun)
-              
+
               skeleton.result = rbind(skeleton.result, data.frame(
                 method = method,
                 network = network,
@@ -221,8 +218,8 @@ for (network in names(conf.networks)) {
                 nbnodes = nbnodes,
                 time.user = time["user.self"],
                 time.sys = time["sys.self"],
-                nbarcs.skel = nrow(skeleton$arcs) / 2, # because the graph is undirected, each arcs is counetd twice
-                nbarcs.true = nrow(truedag$arcs),
+                nbarcs.skel = nrow(skeleton$arcs) / 2, # because the graph is undirected, each arcs is counted twice
+                nbarcs.true = nbarcs.true,
                 tp = tp,
                 tn = tn,
                 fp = fp,
@@ -273,9 +270,6 @@ for (network in names(conf.networks)) {
             for (search in conf.ss.methods) {
               for (ci.test in conf.tests) {
                   
-                  skeleton = get(load(paste("models/skeleton/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep="")))
-                  skeleton.time = get(load(paste("models/skeleton/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep="")))
-                  
                   dag = get(load(paste("models/dag/", search, "/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_dag.rda", sep="")))
                   dag.time = get(load(paste("models/dag/", search, "/", method, "/", ci.test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep="")))
                   
@@ -287,11 +281,7 @@ for (network in names(conf.networks)) {
                     rep = rep,
                     p = p,
                     alpha = alpha,
-                    constraint.nbarcs = nrow(skeleton$arcs),
-                    nbtests = skeleton$learning$ntests,
                     nbscores = dag$learning$nscores,
-                    constraint.time.user = skeleton.time["user.self"],
-                    constraint.time.sys = skeleton.time["sys.self"],
                     search.time.user = dag.time["user.self"],
                     search.time.sys = dag.time["sys.self"],
                     nbnodes = length(truedag$nodes),
@@ -322,6 +312,9 @@ save(dag.result, file="results/dag.result.rda")
 save(truedag.result, file="results/truedag.result.rda")
 
 global.result = cbind(dag.result, data.frame(
+  "nbtests" = rep(NA, nrow(dag.result)),
+  "constraint.time.user" = rep(NA, nrow(dag.result)),
+  "constraint.time.sys" = rep(NA, nrow(dag.result)),
   "nbarcs.skel" = rep(NA, nrow(dag.result)),
   "tp" = rep(NA, nrow(dag.result)),
   "tn" = rep(NA, nrow(dag.result)),
@@ -333,15 +326,18 @@ global.result = cbind(dag.result, data.frame(
   "specificity" = rep(NA, nrow(dag.result))))
 
 for (search in unique(dag.result$search)) {
-  global.result[global.result$search == search, "nbarcs.skel"] = skeleton.result[, "nbarcs.skel"]
-  global.result[global.result$search == search, "tp"] = skeleton.result[, "tp"]
-  global.result[global.result$search == search, "tn"] = skeleton.result[, "tn"]
-  global.result[global.result$search == search, "fp"] = skeleton.result[, "fp"]
-  global.result[global.result$search == search, "fn"] = skeleton.result[, "fn"]
-  global.result[global.result$search == search, "recall"] = skeleton.result[, "recall"]
-  global.result[global.result$search == search, "precision"] = skeleton.result[, "precision"]
-  global.result[global.result$search == search, "error"] = skeleton.result[, "error"]
-  global.result[global.result$search == search, "specificity"] = skeleton.result[, "specificity"]
+  global.result[global.result$search == search & global.result$method != "none", "nbtests"] = skeleton.result$nbtests
+  global.result[global.result$search == search & global.result$method != "none", "constraint.time.user"] = skeleton.result$time.user
+  global.result[global.result$search == search & global.result$method != "none", "constraint.time.sys"] = skeleton.result$time.sys
+  global.result[global.result$search == search & global.result$method != "none", "nbarcs.skel"] = skeleton.result$nbarcs.skel
+  global.result[global.result$search == search & global.result$method != "none", "tp"] = skeleton.result$tp
+  global.result[global.result$search == search & global.result$method != "none", "tn"] = skeleton.result$tn
+  global.result[global.result$search == search & global.result$method != "none", "fp"] = skeleton.result$fp
+  global.result[global.result$search == search & global.result$method != "none", "fn"] = skeleton.result$fn
+  global.result[global.result$search == search & global.result$method != "none", "recall"] = skeleton.result$recall
+  global.result[global.result$search == search & global.result$method != "none", "precision"] = skeleton.result$precision
+  global.result[global.result$search == search & global.result$method != "none", "error"] = skeleton.result$error
+  global.result[global.result$search == search & global.result$method != "none", "specificity"] = skeleton.result$specificity
 }
 
 write.csv(global.result, file="./results/global.result.csv")

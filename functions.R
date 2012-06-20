@@ -331,31 +331,35 @@ learn.skeleton = function(params) {
   p = params$p
   alpha = params$alpha
   
-  set.seed(seed)
-  
-  filename = paste(target, "_", size, "_", rep, sep="")
-  
-  training = get(load(paste("samples/", filename, "_training.rda", sep="")))
-  order = get(load(paste("samples/", filename, "_order_", p, ".rda", sep="")))
-  
-  time = system.time((
-    skeleton = switch(method,
-                      "mmpc" = mmpc(x = training[, order], test = test, alpha = alpha,
+  if (method != "none") {
+    
+    set.seed(seed)
+    
+    filename = paste(target, "_", size, "_", rep, sep="")
+    
+    training = get(load(paste("samples/", filename, "_training.rda", sep="")))
+    order = get(load(paste("samples/", filename, "_order_", p, ".rda", sep="")))
+    
+    time = system.time((
+      skeleton = switch(method,
+                        "mmpc" = mmpc(x = training[, order], test = test, alpha = alpha,
+                                      optimized = FALSE, strict = FALSE, undirected = TRUE),
+                        "hpc" = hpc(x = training[, order], test = test, alpha = alpha,
                                     optimized = FALSE, strict = FALSE, undirected = TRUE),
-                      "hpc" = hpc(x = training[, order], test = test, alpha = alpha,
-                                  optimized = FALSE, strict = FALSE, undirected = TRUE),
-                      "hpc-and" = hpc(x = training[, order], test = test, alpha = alpha,
-                                      optimized = FALSE, strict = FALSE, undirected = TRUE,
-                                      nbr.join = "AND"),
-                      "truedag" = skeleton(bn.net(get(load(paste("./networks/", target, ".rda", sep="")))))
-                      )
-    ))
-  
-  dir.create(paste("models/skeleton/", method, "/", test, "/", alpha, sep=""), recursive = TRUE, showWarnings = FALSE)
-  
-  save(skeleton, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep=""))
-  save(time, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep=""))
-  
+                        "hpc-and" = hpc(x = training[, order], test = test, alpha = alpha,
+                                        optimized = FALSE, strict = FALSE, undirected = TRUE,
+                                        nbr.join = "AND"),
+                        "truedag" = skeleton(bn.net(get(load(paste("./networks/", target, ".rda", sep="")))))
+                        )
+      ))
+    
+    dir.create(paste("models/skeleton/", method, "/", test, "/", alpha, sep=""), recursive = TRUE, showWarnings = FALSE)
+    
+    save(skeleton, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep=""))
+    save(time, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep=""))
+
+  }
+
 }#LEARN.SKELETON
 
 learn.dag = function(params) {
@@ -376,12 +380,13 @@ learn.dag = function(params) {
   
   training = get(load(paste("samples/", filename, "_training.rda", sep="")))
   order = get(load(paste("samples/", filename, "_order_", p, ".rda", sep="")))
-  skeleton = get(load(paste("models/skeleton/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep="")))
+  if (fromMethod != "none")
+    skeleton = get(load(paste("models/skeleton/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep="")))
   
   time = system.time((
     dag = switch(method,
                  "tabu" = tabu(x = training[, order], start = NULL,
-                               blacklist = arcs.to.be.added(skeleton$arcs, names(skeleton$nodes)),
+                               blacklist = if(fromMethod == "none") NULL else arcs.to.be.added(skeleton$arcs, names(skeleton$nodes)),
                                score = params$score, tabu = params$tabu, max.tabu = params$max.tabu,
                                optimized = TRUE),
                  "2p" = pdag2dag(x = skeleton2pdag(bn = skeleton, data = training[, order], strict = FALSE),
@@ -410,4 +415,62 @@ gen.rep.bn.fit = function(bn, nb) {
     }
   }
   return(bn.rep)
+}
+
+plot.fig.lines = function(res, x, y, seps, color = "red", pch = 3, lty = 1) {
+  if (length(seps) > 0) {
+    for (sep in seps[[1]]) {
+      plot.fig.lines(res = res[res[, names(seps)[1]] == sep, ],
+                     x = x[res[, names(seps)[1]] == sep],
+                     y = y[res[, names(seps)[1]] == sep],
+                     seps = seps[-1], color = color, pch = pch)
+    }
+  }
+  else {
+    points(aggregate(y, list(x), mean), pch = pch, col = color)
+    lines(aggregate(y, list(x), mean), type = "l", col = color, lwd = 1.5, lty = lty)
+  }
+}
+
+boxplot.fig = function(x, y, xlab, ylab, color) {
+  y = y[y != NA | y != Inf]
+  x = x[y != NA | y != Inf]
+  #  plot(aggregate(y, list(x), mean), pch = 16, xlab = xlab, ylab = paste(ylab, "% improvement"))
+  #  lines(aggregate(y, list(x), mean), type = "l")
+  boxplot(y ~ x,
+          xlab = xlab,
+          ylab = "measure",
+          #          ylab = "",
+          boxwex = 0.5)
+  #          xlab="",
+  #          ylab="",
+  #          at = aggregate(bx, list(bx), mean)[, "x"],
+  #          add = TRUE)
+  title(ylab)
+  grid(nx = NA, ny = NULL)
+  points(aggregate(y, list(factor(x)), mean), pch = 16, col = color)
+  lines(aggregate(y, list(factor(x)), mean), type = "l", col = color)
+}
+
+boxplot.factor.fig = function(x, y, xlab, ylab, color) {
+  y = y[y != NA | y != Inf]
+  x = x[y != NA | y != Inf]
+  #  plot(aggregate(y, list(x), mean), pch = 16, xlab = xlab, ylab = paste(ylab, "% improvement"))
+  #  lines(aggregate(y, list(x), mean), type = "l")
+  boxplot(y ~ x,
+          xlab = xlab,
+          #          xlab="",
+          ylab = "increase factor",
+          #          ylab = "",
+          border = color,
+          boxwex = 0.5,
+          ylim = c(min(1, min(ifelse(by == Inf, NA, by), na.rm=TRUE)), max(1, max(ifelse(by == Inf, NA, by), na.rm=TRUE)))
+          #          at = aggregate(bx, list(bx), mean)[, "x"],
+          #          add = TRUE)
+          )
+  title(ylab)
+  grid(nx = NA, ny = NULL)
+  lines(c(0, length(levels(factor(x))) + 1), c(1, 1), type = "l", lty = "solid", col = "red")
+  points(aggregate(y, list(factor(x)), mean), pch = 16)
+  lines(aggregate(y, list(factor(x)), mean), type = "l")
 }

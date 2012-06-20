@@ -27,7 +27,7 @@ save(bn, file ="networks/child10.rda")
 conf.networks = list()
 conf.dags = list()
 
-#c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")
+# c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")
 # for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")) {
 #   tmp = gen.network.from.file(network)
 #   conf.networks[[network]] = tmp[["bn.fitted"]]
@@ -42,13 +42,15 @@ conf.dags = list()
 # "insurance", "insurance3", "insurance5", "insurance10",
 # "child", "child3", "child5", "child10"
 
-for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin", "pigs", "link")) {
+# "alarm", "insurance", "child", "hailfinder", "mildew", "munin1", "pigs", "link"
+
+for (network in c("alarm")) {
   conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
 conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
-conf.pc.methods = c("hpc-and", "mmpc")# c("mmpc", "hpc", "hpc-and") c("truedag")
+conf.pc.methods = c("none", "hpc-and", "mmpc")# c("mmpc", "hpc", "hpc-and") c("truedag")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 10
@@ -63,3 +65,9 @@ conf.tabu = 100
 conf.max.tabu = 15
 conf.restart = 0
 conf.perturb = 0
+
+conf.pc.colors = list(
+  "mmpc" = c("red", "red"),
+  "hpc" = c("blue", "dodgerblue4"),
+  "hpc-and" = c("darkgreen", "forestgreen"),
+  "none" = c("darkmagenta", "deeppink4"))
