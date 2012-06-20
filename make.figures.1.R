@@ -64,7 +64,7 @@ for(target in c(names(conf.networks), "all")) {
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "False potisive rate\n(lower is better)"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
+  ylab = "False positive rate\n(lower is better)"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
@@ -76,7 +76,7 @@ for(target in c(names(conf.networks), "all")) {
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Number of CI tests"; measure = "nbtests"; y = res_disp[, "nbtests"]
+  ylab = "Number of statistical tests"; measure = "nbtests"; y = res_disp[, "nbtests"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
 
@@ -105,15 +105,23 @@ for(target in c(names(conf.networks), "all")) {
         plot.fig.lines(res = truedag.result, x_truedag, y_truedag, color = "black", pch = 3, lty = 2, seps = list())
       }
       
+      legend.col = c()
+      legend.pch = c()
+      pch = 0
       for (method in unique(res_disp$method)) {
-        plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]][1], pch = 2, seps = list(
+        plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]][1], pch = pch, seps = list(
           method = method
           #  ,search = "tabu"
           #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
           #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
           #  ,p = 1:5
         ))
+        legend.col = c(legend.col, conf.pc.colors[[method]][1])
+        legend.pch = c(legend.pch, pch)
+        pch = pch+1
       }
+      # au milieu: ylim[2]/2 + ylim[2]/5
+      legend(max(x) - 2*max(x)/5, ylim[2], unique(res_disp$method), cex=0.8, col=legend.col, pch=legend.pch);
     }
     
     # Raw lines, all methods
@@ -141,6 +149,13 @@ for(target in c(names(conf.networks), "all")) {
     for (method in setdiff(unique(res_disp$method), base.method)) {
       png(paste(folder, "/", file, "_%inc_", method, "_", measure, ".png", sep=""))
       par(disp.pars.png)
+      by = (y[res_disp$method == method] / y[res_disp$method == base.method])
+      bx = x[res_disp$method == method]
+      boxplot.factor.fig(bx, by, xlab, ylab, conf.pc.colors[[method]][2])
+      dev.off()
+      postscript(paste(folder, "/", file, "_%inc_", method, "_", measure, ".eps", sep=""),
+                 horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+      par(disp.pars.eps)
       by = (y[res_disp$method == method] / y[res_disp$method == base.method])
       bx = x[res_disp$method == method]
       boxplot.factor.fig(bx, by, xlab, ylab, conf.pc.colors[[method]][2])
