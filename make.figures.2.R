@@ -48,63 +48,72 @@ for(target in c(names(conf.networks), "all")) {
   
   yaxises = list()
   
-  ylab = "Maximisation time (SS)"; measure = "time_search"; y = res_disp[, "search.time.user"]
+  title = "Maximisation time (SS)"; measure = "time_search"; ylab = "time in seconds"
+  y = res_disp[, "search.time.user"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Total time"; measure = "time_total"; y = res_disp[, "constraint.time.user"] + res_disp[, "search.time.user"]; y[is.na(y)] = res_disp$search.time.user[is.na(y)]
+  title = "Total time"; measure = "time_total"; ylab = "time in seconds"
+  y = res_disp[, "constraint.time.user"] + res_disp[, "search.time.user"]; y[is.na(y)] = res_disp$search.time.user[is.na(y)]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Number of scores"; measure = "nbscores"; y = res_disp[, "nbscores"]
+  title = "Number of scores"; measure = "nbscores"; ylab = "calls"
+  y = res_disp[, "nbscores"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Strustural Hamming Distance\n(lower is better)"; measure = "score_SHD"; y = res_disp[, "shd"]
+  title = "Strustural Hamming Distance\n(lower is better)"; measure = "score_SHD"; ylab = "distance"
+  y = res_disp[, "shd"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "BDe on train data\n(lower is better)"; measure = "score_BDe_train"; y = res_disp[, "bde.train"]
+  title = "BDeu on train data\n(lower is better)"; measure = "score_BDe_train"; ylab = "score"
+  y = res_disp[, "bde.train"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.train"]
   if (!is.null(x_truedag)) {
     ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
     ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  ylab = "BIC on train data\n(lower is better)"; measure = "score_BIC_train"; y = res_disp[, "bic.train"]
+  title = "BIC on train data\n(lower is better)"; measure = "score_BIC_train"; ylab = "score"
+  y = res_disp[, "bic.train"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.train"]
   if (!is.null(x_truedag)) {
     ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
     ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  ylab = "BDe on test data\n(lower is better)"; measure = "score_BDe_test"; y = res_disp[, "bde.test"]
+  title = "BDeu on test data\n(lower is better)"; measure = "score_BDe_test"; ylab = "score"
+  y = res_disp[, "bde.test"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.test"]
   if (!is.null(x_truedag)) {
     ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
     ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  ylab = "BIC on test data\n(lower is better)"; measure = "score_BIC_test"; y = res_disp[, "bic.test"]
+  title = "BIC on test data\n(lower is better)"; measure = "score_BIC_test"; ylab = "score"
+  y = res_disp[, "bic.test"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.test"]
   if (!is.null(x_truedag)) {
     ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
     ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
   for (axis in yaxises) {
     
     y = axis$y
-    ylab = axis$ylab
+    title = axis$title
     measure = axis$measure
+    ylab = axis$ylab
     ylim = axis$ylim
     y_truedag = axis$y_truedag
     
@@ -116,10 +125,9 @@ for(target in c(names(conf.networks), "all")) {
            type = "n",
            ylim=ylim,
            xlab=xlab,
-           ylab="measure"
-           #     ylab=""
+           ylab=ylab
            )
-      title(ylab)
+      title(title)
       
       if (!is.null(y_truedag) && !is.null(x_truedag)) {
         plot.fig.lines(res = truedag.result, x_truedag, y_truedag, color = "black", pch = 3, lty = 2, seps = list())
@@ -161,7 +169,7 @@ for(target in c(names(conf.networks), "all")) {
       par(disp.pars.png)
       by = y[res_disp$method == method]
       bx = x[res_disp$method == method]
-      boxplot.fig(bx, by, xlab, ylab, color = conf.pc.colors[[method]][1])
+      boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
       dev.off()
     }
     
@@ -171,14 +179,14 @@ for(target in c(names(conf.networks), "all")) {
       par(disp.pars.png)
       by = (y[res_disp$method == method] / y[res_disp$method == base.method])
       bx = x[res_disp$method == method]
-      boxplot.factor.fig(bx, by, xlab, ylab, conf.pc.colors[[method]][2])
+      boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
       dev.off()
       postscript(paste(folder, "/", file, "_%inc_", method, "_", measure, ".eps", sep=""),
                  horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
       par(disp.pars.eps)
       by = (y[res_disp$method == method] / y[res_disp$method == base.method])
       bx = x[res_disp$method == method]
-      boxplot.factor.fig(bx, by, xlab, ylab, conf.pc.colors[[method]][2])
+      boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
       dev.off()
     }
   }

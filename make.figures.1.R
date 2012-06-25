@@ -48,41 +48,50 @@ for(target in c(names(conf.networks), "all")) {
   
   yaxises = list()
   
-  ylab = "Euclidian distance\n(lower is better)"; measure = "skel_error"; y = res_disp[, "error"]
+  title = "Euclidian distance\n(lower is better)"; measure = "skel_error"; ylab="measure"
+  y = res_disp[, "error"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, sqrt(2))
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Recall\n(higher is better)"; measure = "skel_recall"; y = res_disp[, "recall"]
+  title = "Recall\n(higher is better)"; measure = "skel_recall"; ylab="measure"
+  y = res_disp[, "recall"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Precision\n(higher is better)"; measure = "skel_precision"; y = res_disp[, "precision"]
+  title = "Precision\n(higher is better)"; measure = "skel_precision"; ylab="measure"
+  y = res_disp[, "precision"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Specificity\n(higher is better)"; measure = "skel_specificity"; y = res_disp[, "specificity"]
+  title = "Specificity\n(higher is better)"; measure = "skel_specificity"; ylab="measure"
+  y = res_disp[, "specificity"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "False positive rate\n(lower is better)"; measure = "skel_fpr"; y = 1 - res_disp[, "specificity"]
+  title = "False positive rate\n(lower is better)"; measure = "skel_fpr"; ylab="rate"
+  y = 1 - res_disp[, "specificity"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Fales negative rate\n(lower is better)"; measure = "skel_fnr"; y = 1 - res_disp[, "recall"]
+  title = "Fales negative rate\n(lower is better)"; measure = "skel_fnr"; ylab="rate"
+  y = 1 - res_disp[, "recall"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Restriction time (CB)"; measure = "time_constraint"; y = res_disp[, "constraint.time.user"]
+  title = "Restriction time (CB)"; measure = "time_constraint"; ylab="time in seconds"
+  y = res_disp[, "constraint.time.user"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  ylab = "Number of statistical tests"; measure = "nbtests"; y = res_disp[, "nbtests"]
+  title = "Number of statistical tests"; measure = "nbtests"; ylab="calls"
+  y = res_disp[, "nbtests"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(ylab = ylab, measure = measure, y = y, ylim = ylim)
+  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
 
   for (axis in yaxises) {
     
     y = axis$y
+    title = axis$title
     ylab = axis$ylab
     measure = axis$measure
     ylim = axis$ylim
@@ -96,10 +105,9 @@ for(target in c(names(conf.networks), "all")) {
            type = "n",
            ylim=ylim,
            xlab=xlab,
-           ylab="measure"
-      #     ylab=""
+           ylab=ylab
       )
-      title(ylab)
+      title(title)
   
       if (!is.null(y_truedag) && !is.null(x_truedag)) {
         plot.fig.lines(res = truedag.result, x_truedag, y_truedag, color = "black", pch = 3, lty = 2, seps = list())
@@ -141,7 +149,7 @@ for(target in c(names(conf.networks), "all")) {
       par(disp.pars.png)
       by = y[res_disp$method == method]
       bx = x[res_disp$method == method]
-      boxplot.fig(bx, by, xlab, ylab, color = conf.pc.colors[[method]][1])
+      boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
       dev.off()
     }
     
@@ -151,14 +159,14 @@ for(target in c(names(conf.networks), "all")) {
       par(disp.pars.png)
       by = (y[res_disp$method == method] / y[res_disp$method == base.method])
       bx = x[res_disp$method == method]
-      boxplot.factor.fig(bx, by, xlab, ylab, conf.pc.colors[[method]][2])
+      boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
       dev.off()
       postscript(paste(folder, "/", file, "_%inc_", method, "_", measure, ".eps", sep=""),
                  horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
       par(disp.pars.eps)
       by = (y[res_disp$method == method] / y[res_disp$method == base.method])
       bx = x[res_disp$method == method]
-      boxplot.factor.fig(bx, by, xlab, ylab, conf.pc.colors[[method]][2])
+      boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
       dev.off()
     }
   }

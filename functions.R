@@ -432,27 +432,26 @@ plot.fig.lines = function(res, x, y, seps, color = "red", pch = 3, lty = 1) {
   }
 }
 
-boxplot.fig = function(x, y, xlab, ylab, color) {
+boxplot.fig = function(x, y, xlab, ylab, title, color) {
   y = y[y != NA | y != Inf]
   x = x[y != NA | y != Inf]
   #  plot(aggregate(y, list(x), mean), pch = 16, xlab = xlab, ylab = paste(ylab, "% improvement"))
   #  lines(aggregate(y, list(x), mean), type = "l")
   boxplot(y ~ x,
           xlab = xlab,
-          ylab = "measure",
-          #          ylab = "",
+          ylab = ylab,
           boxwex = 0.5)
   #          xlab="",
   #          ylab="",
   #          at = aggregate(bx, list(bx), mean)[, "x"],
   #          add = TRUE)
-  title(ylab)
+  title(title)
   grid(nx = NA, ny = NULL)
   points(aggregate(y, list(factor(x)), mean), pch = 16, col = color)
   lines(aggregate(y, list(factor(x)), mean), type = "l", col = color)
 }
 
-boxplot.factor.fig = function(x, y, xlab, ylab, color) {
+boxplot.factor.fig = function(x, y, xlab, ylab, title, color) {
   y = y[y != NA | y != Inf]
   x = x[y != NA | y != Inf]
   #  plot(aggregate(y, list(x), mean), pch = 16, xlab = xlab, ylab = paste(ylab, "% improvement"))
@@ -468,7 +467,7 @@ boxplot.factor.fig = function(x, y, xlab, ylab, color) {
           #          at = aggregate(bx, list(bx), mean)[, "x"],
           #          add = TRUE)
           )
-  title(ylab)
+  title(title)
   grid(nx = NA, ny = NULL)
   lines(c(0, length(levels(factor(x))) + 1), c(1, 1), type = "l", lty = "solid", col = "red")
   points(aggregate(y, list(factor(x)), mean), pch = 16)
