@@ -44,13 +44,13 @@ conf.dags = list()
 
 # "alarm", "insurance", "child", "hailfinder", "mildew", "munin1", "pigs", "link"
 
-for (network in c("alarm", "insurance", "child", "hailfinder", "mildew", "munin1", "pigs", "link")) {
+for (network in c("child", "insurance", "alarm", "mildew", "hailfinder", "munin1", "pigs", "link")) {
   conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
 conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
-conf.pc.methods = c("hpc", "hpc-and", "mmpc")# c("mmpc", "hpc", "hpc-and") c("truedag")
+conf.pc.methods = c("hpc-and", "mmpc")# c("mmpc", "hpc", "hpc-and") c("truedag")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 10
@@ -71,3 +71,9 @@ conf.pc.colors = list(
   "hpc" = c("blue", "dodgerblue4"),
   "hpc-and" = c("darkgreen", "forestgreen"),
   "none" = c("darkmagenta", "deeppink4"))
+
+conf.pc.labels = list(
+  "mmpc" = "MMPC",
+  "hpc" = "HPC-OR",
+  "hpc-and" = "HPC",
+  "none" = "none")

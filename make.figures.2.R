@@ -135,6 +135,7 @@ for(target in c(names(conf.networks), "all")) {
       
       legend.col = c()
       legend.pch = c()
+      legend.label = c()
       pch = 0
       for (method in unique(res_disp$method)) {
         plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]][1], pch = pch, seps = list(
@@ -146,10 +147,11 @@ for(target in c(names(conf.networks), "all")) {
           ))
         legend.col = c(legend.col, conf.pc.colors[[method]][1])
         legend.pch = c(legend.pch, pch)
+        legend.label = c(legend.label, conf.pc.labels[[method]][1])
         pch = pch+1
       }
       # au milieu: ylim[2]/2 + ylim[2]/5
-      legend(max(x) - 2*max(x)/5, ylim[2], unique(res_disp$method), cex=0.8, col=legend.col, pch=legend.pch);
+      legend(max(x) - 2*max(x)/5, ylim[2], legend.label, cex=0.8, col=legend.col, pch=legend.pch);
     }
     
     # Raw lines, all methods
