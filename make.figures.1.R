@@ -20,7 +20,7 @@ for(target in c(names(conf.networks), "all")) {
     file = target
     networks = target
   }
-  file = paste(file, "_ph1", sep="")
+  phase = "ph1"
   
   #res_disp = skeleton.node.result
   res_disp = global.result
@@ -134,11 +134,11 @@ for(target in c(names(conf.networks), "all")) {
     }
     
     # Raw lines, all methods
-    png(paste(folder, "/", file, "_all_", measure, ".png", sep=""))
+    png(paste(folder, "/", file, "__all_", phase, "_", measure, ".png", sep=""))
     par(disp.pars.png)
     graph.plot.all()
     dev.off()
-    postscript(paste(folder, "/", file, "_all_", measure, ".eps", sep=""),
+    postscript(paste(folder, "/", file, "__all_", phase, "_", measure, ".eps", sep=""),
                horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
     par(disp.pars.eps)
     graph.plot.all()
@@ -146,7 +146,7 @@ for(target in c(names(conf.networks), "all")) {
     
     # Raw boxplots
     for (method in unique(res_disp$method)) {
-      png(paste(folder, "/", file, "_", method, "_", measure, ".png", sep=""))
+      png(paste(folder, "/", file, "_", method, "_", phase, "_", measure, ".png", sep=""))
       par(disp.pars.png)
       by = y[res_disp$method == method]
       bx = x[res_disp$method == method]
@@ -157,13 +157,13 @@ for(target in c(names(conf.networks), "all")) {
     # Increase factor boxplots
     if(!is.null(conf.pc.base.method))
       for (method in setdiff(unique(res_disp$method), conf.pc.base.method)) {
-        png(paste(folder, "/", file, "_%inc_", method, "_", measure, ".png", sep=""))
+        png(paste(folder, "/", file, "_%inc_", method, "_", phase, "_", measure, ".png", sep=""))
         par(disp.pars.png)
         by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
         bx = x[res_disp$method == method]
         boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
         dev.off()
-        postscript(paste(folder, "/", file, "_%inc_", method, "_", measure, ".eps", sep=""),
+        postscript(paste(folder, "/", file, "_%inc_", method, "_", phase, "_", measure, ".eps", sep=""),
                    horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
         par(disp.pars.eps)
         by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
