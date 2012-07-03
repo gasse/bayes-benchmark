@@ -343,12 +343,19 @@ learn.skeleton = function(params) {
     time = system.time((
       skeleton = switch(method,
                         "mmpc" = mmpc(x = training[, order], test = test, alpha = alpha,
-                                      optimized = FALSE, strict = FALSE, undirected = TRUE),
+                              optimized = FALSE, strict = FALSE, undirected = TRUE),
                         "hpc" = hpc(x = training[, order], test = test, alpha = alpha,
-                                    optimized = FALSE, strict = FALSE, undirected = TRUE),
-                        "hpc-and" = hpc(x = training[, order], test = test, alpha = alpha,
-                                        optimized = FALSE, strict = FALSE, undirected = TRUE,
-                                        nbr.join = "AND"),
+                              optimized = FALSE, strict = FALSE, undirected = TRUE, nbr.join="AND"),
+                        "hpc-or" = hpc(x = training[, order], test = test, alpha = alpha,
+                              optimized = FALSE, strict = FALSE, undirected = TRUE, nbr.join="OR"),
+                        "hpc-iamb" = hpc.3(x = training[, order], test = test, alpha = alpha,
+                              optimized = FALSE, strict = FALSE, undirected = TRUE),
+                        "iamb" = iamb(x = training[, order], test = test, alpha = alpha,
+                              optimized = FALSE, strict = FALSE, undirected = TRUE),
+                        "inter-iamb" = inter.iamb(x = training[, order], test = test, alpha = alpha,
+                              optimized = FALSE, strict = FALSE, undirected = TRUE),
+                        "fast-iamb" = fast.iamb(x = training[, order], test = test, alpha = alpha,
+                              optimized = FALSE, strict = FALSE, undirected = TRUE),
                         "truedag" = skeleton(bn.net(get(load(paste("./networks/", target, ".rda", sep="")))))
                         )
       ))

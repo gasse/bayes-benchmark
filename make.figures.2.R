@@ -8,7 +8,6 @@ disp.pars.png = list(cex = 1.4, lwd = 1.2, las=2, oma=c(0, 0, 0, 0))
 disp.pars.eps = list(cex = 1.4, las=2, oma=c(0, 0, 0, 0))
 
 folder = "figures"
-base.method = "mmpc"
 
 # c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link", "all")
 for(target in c(names(conf.networks), "all")) {
@@ -176,20 +175,21 @@ for(target in c(names(conf.networks), "all")) {
     }
     
     # Increase factor boxplots
-    for (method in setdiff(unique(res_disp$method), base.method)) {
-      png(paste(folder, "/", file, "_%inc_", method, "_", measure, ".png", sep=""))
-      par(disp.pars.png)
-      by = (y[res_disp$method == method] / y[res_disp$method == base.method])
-      bx = x[res_disp$method == method]
-      boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
-      dev.off()
-      postscript(paste(folder, "/", file, "_%inc_", method, "_", measure, ".eps", sep=""),
-                 horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
-      par(disp.pars.eps)
-      by = (y[res_disp$method == method] / y[res_disp$method == base.method])
-      bx = x[res_disp$method == method]
-      boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
-      dev.off()
-    }
+    if(!is.null(conf.pc.base.method))
+      for (method in setdiff(unique(res_disp$method), conf.pc.base.method)) {
+        png(paste(folder, "/", file, "_%inc_", method, "_", measure, ".png", sep=""))
+        par(disp.pars.png)
+        by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
+        bx = x[res_disp$method == method]
+        boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
+        dev.off()
+        postscript(paste(folder, "/", file, "_%inc_", method, "_", measure, ".eps", sep=""),
+                   horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+        par(disp.pars.eps)
+        by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
+        bx = x[res_disp$method == method]
+        boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
+        dev.off()
+      }
   }
 }

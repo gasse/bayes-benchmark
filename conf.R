@@ -42,15 +42,15 @@ conf.dags = list()
 # "insurance", "insurance3", "insurance5", "insurance10",
 # "child", "child3", "child5", "child10"
 
-# "alarm", "insurance", "child", "hailfinder", "mildew", "munin1", "pigs", "link"
+# "child", "insurance", "alarm", "mildew", "hailfinder", "munin1", "pigs", "link"
 
-for (network in c("child", "insurance", "alarm", "mildew", "hailfinder", "munin1", "pigs", "link")) {
+for (network in c("alarm")) {
   conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
-conf.pc.methods = c("hpc-and", "mmpc")# c("mmpc", "hpc", "hpc-and") c("truedag")
+conf.trainingsizes =  c(1500, 5000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
+conf.pc.methods = c("iamb", "inter-iamb", "fast-iamb")# c("truedag", "none", "mmpc", "hpc", "hpc-and")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 10
@@ -67,13 +67,23 @@ conf.restart = 0
 conf.perturb = 0
 
 conf.pc.colors = list(
+  "iamb" = c("yellow2", "yellow3"),
+  "inter-iamb" = c("turquoise3", "turquoise4"),
+  "fast-iamb" = c("orangered4", "orangered3"),
   "mmpc" = c("red", "red"),
-  "hpc" = c("blue", "dodgerblue4"),
-  "hpc-and" = c("darkgreen", "forestgreen"),
-  "none" = c("darkmagenta", "deeppink4"))
+  "hpc" = c("darkgreen", "forestgreen"),
+  "hpc-iamb" = c("blue", "dodgerblue4"),
+  "none" = c("darkmagenta", "deeppink4"),
+  "truedag" = c("darkorange", "darkorange3"))
 
 conf.pc.labels = list(
+  "iamb" = "IAMB",
+  "inter-iamb" = "Inter-IAMB",
+  "fast-iamb" = "Fast-IAMB",
   "mmpc" = "MMPC",
-  "hpc" = "HPC-OR",
-  "hpc-and" = "HPC",
-  "none" = "none")
+  "hpc" = "HPC",
+  "hpc-iamb" = "HPC-3",
+  "none" = "none",
+  "truedag" = "truedag")
+
+conf.pc.base.method = NULL # "mmpc"
