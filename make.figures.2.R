@@ -62,7 +62,7 @@ for(target in c(names(conf.networks), "all")) {
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  title = "Strustural Hamming Distance\n(lower is better)"; measure = "score_SHD"; ylab = "distance"
+  title = "Structural Hamming Distance\n(lower is better)"; measure = "score_SHD"; ylab = "distance"
   y = res_disp[, "shd"]
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)

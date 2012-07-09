@@ -7,9 +7,9 @@ for (target in names(conf.networks)) {
   
   todo = list()
   set.seed(conf.seed)
-  for (size in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
-      for (method in conf.pc.methods) {
+  for (method in conf.pc.methods) {
+    for (size in conf.trainingsizes) {
+      for (rep in 1:conf.trainingreps) {
         for (test in conf.tests) {
           for (p in 1:conf.trainingpermuts) {
             for (alpha in conf.alphas) {
@@ -43,10 +43,10 @@ for (target in names(conf.networks)) {
 for (target in names(conf.networks)) {
   
   todo = list()
-  for (size in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
-      for (fromMethod in conf.pc.methods) {
-        for (method in conf.ss.methods) {
+  for (fromMethod in conf.pc.methods) {
+    for (method in conf.ss.methods) {
+      for (size in conf.trainingsizes) {
+        for (rep in 1:conf.trainingreps) {
           for (test in conf.tests) {
             for (p in 1:conf.trainingpermuts) {
               for (alpha in conf.alphas) {
