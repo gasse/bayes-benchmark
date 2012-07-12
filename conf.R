@@ -11,19 +11,35 @@ conf.dags = list()
 # "alarm", "alarm3", "alarm5", "alarm10",
 # "insurance", "insurance3", "insurance5", "insurance10",
 # "child", "child3", "child5", "child10"
+# c(1000, 10000)
+# 10000
 
 # ECML
 # "child", "insurance", "alarm", "mildew", "hailfinder", "munin1", "pigs", "link"
+# c(50, 100, 200, 500, 1500, 5000)
+# 5000
 
-for (network in c("alarm")) {
-  conf.networks[[network]] = get(load(file=paste("./networks/", network, ".rda", sep="")))
+# Tsamardinos'
+# "tsam.alarm1", "tsam.alarm3", "tsam.alarm5", "tsam.alarm10"
+# "tsam.barley", "tsam.child1", "tsam.child3", "tsam.child5",
+# "tsam.child10", "tsam.gene", "tsam.hailfinder1", "tsam.hailfinder3",
+# "tsam.hailfinder5", "tsam.hailfinder10", "tsam.insurance1",
+# "tsam.insurance3", "tsam.insurance5", "tsam.insurance10",
+# "tsam.link", "tsam.mildew", "tsam.munin1", "tsam.pigs"
+# c(500, 1000, 5000)
+# 5000
+
+for (network in c("tsam.alarm1", "tsam.alarm3", "tsam.alarm5", "tsam.alarm10"
+                  "tsam.child1", "tsam.child3", "tsam.child5", "tsam.child10",
+                  "tsam.insurance1", "tsam.insurance3", "tsam.insurance5", "tsam.insurance10")) {
+  conf.networks[[network]] = get(load(file=paste("networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000) # c(50, 100, 200, 500, 1500, 5000) c(1000, 10000)
-conf.pc.methods = c("mmpc", "hpc", "fast-hpc", "iamb", "hpc3", "hpc4")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "hpc4", "fast-hpc", "iamb", "inter-iamb", "fast-iamb")
+conf.trainingsizes =  c(500, 1000, 5000)
+conf.pc.methods = c("mmpc", "hpc")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
-conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
+conf.alphas = c(0.01, 0.02, 0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 10
 conf.trainingpermuts = 1
 conf.testsize = 5000
@@ -56,8 +72,8 @@ conf.pc.labels = list(
   "fast-iamb" = "Fast-IAMB",
   "mmpc" = "MMPC",
   "hpc" = "HPC",
-  "fast-hpc" = "HPC-fast",
   "hpc-or" = "HPC-OR",
+  "fast-hpc" = "HPC-fast",
   "hpc3" = "HPC-mmpc",
   "hpc4" = "HPC-tabu",
   "none" = "none",
