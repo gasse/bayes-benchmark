@@ -159,8 +159,8 @@ for (network in names(conf.networks)) {
   nbarcs.true = nrow(truedag$arcs)
 
   for (samplesize in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
-      for (p in 1:conf.trainingpermuts) {
+    for (rep in conf.trainingreps) {
+      for (p in conf.trainingpermuts) {
         for (alpha in conf.alphas) {
 
           filename = paste(network, "_", samplesize, "_", rep, "_p", p, sep="")
@@ -242,14 +242,14 @@ for (network in names(conf.networks)) {
   truedag = conf.dags[[network]]
 
   for (samplesize in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
+    for (rep in conf.trainingreps) {
       for (alpha in conf.alphas) {
 
         filename = paste(network, "_", samplesize, "_", rep, sep="")
         test.data = get(load(paste("samples/", filename, "_test.rda", sep="")))
         train.data = get(load(paste("samples/", filename, "_training.rda", sep="")))
   
-        for (p in 1:conf.trainingpermuts) {
+        for (p in conf.trainingpermuts) {
   
           cat("dag ", filename, "_p", p, "\n", sep = "")
   
@@ -346,4 +346,4 @@ write.csv(global.result, file="./results/global.result.csv")
 #aggregate(skeleton.node.result$network, list(skeleton.node.result$network, skeleton.node.result$method, skeleton.node.result$samplesize), length)
 aggregate(skeleton.result$network, list(skeleton.result$network, skeleton.result$method, skeleton.result$samplesize), length)
 aggregate(dag.result$network, list(dag.result$search, dag.result$network, dag.result$method, dag.result$samplesize), length)
-aggregate(truedag.result$network, list(truedag.result$network, truedag.result$samplesize, truedag.result$rep, truedag.result$p), length)
+aggregate(truedag.result$network, list(truedag.result$network, truedag.result$samplesize, truedag.result$p), length)

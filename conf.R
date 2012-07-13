@@ -37,11 +37,11 @@ for (network in c("tsam.alarm1", "tsam.alarm3", "tsam.alarm5", "tsam.alarm10"
 }
 
 conf.trainingsizes =  c(500, 1000, 5000)
-conf.pc.methods = c("mmpc", "hpc")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
+conf.pc.methods = c("mmpc", "hpc", "truedag")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.01, 0.02, 0.05) # c(0.01, 0.02, 0.05) c(0)
-conf.trainingreps = 10
-conf.trainingpermuts = 1
+conf.trainingreps = 1:10
+conf.trainingpermuts = 1:1
 conf.testsize = 5000
 conf.seed = 1596841
 conf.nbcores = 4
