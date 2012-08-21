@@ -29,17 +29,23 @@ conf.dags = list()
 # c(500, 1000, 5000)
 # 5000
 
-for (network in c("tsam.alarm1", "tsam.alarm3", "tsam.alarm5", "tsam.alarm10"
-                  "tsam.child1", "tsam.child3", "tsam.child5", "tsam.child10",
-                  "tsam.insurance1", "tsam.insurance3", "tsam.insurance5", "tsam.insurance10")) {
+for (network in c(
+  "child", "insurance", "alarm", "mildew", "hailfinder", "munin1"
+#   "alarm", "alarm3", "alarm5", "alarm10",
+#   "child", "child3", "child5", "child10",
+#   "insurance", "insurance3", "insurance5", "insurance10",
+#   "tsam.alarm1" , "tsam.alarm3", "tsam.alarm5", "tsam.alarm10",
+#   "tsam.child1", "tsam.child3", "tsam.child5", "tsam.child10",
+#   "tsam.insurance1", "tsam.insurance3", "tsam.insurance5", "tsam.insurance10"
+  )) {
   conf.networks[[network]] = get(load(file=paste("networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(500, 1000, 5000)
-conf.pc.methods = c("mmpc", "hpc", "truedag")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
+conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000)
+conf.pc.methods = c("mmpc", "hpc", "hpc-or", "hpc-cached")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc-cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
-conf.alphas = c(0.01, 0.02, 0.05) # c(0.01, 0.02, 0.05) c(0)
+conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 1:10
 conf.trainingpermuts = 1:1
 conf.testsize = 5000
@@ -60,7 +66,8 @@ conf.pc.colors = list(
   "mmpc" = c("red", "red"),
   "hpc" = c("darkgreen", "forestgreen"),
   "hpc-or" = c("turquoise3", "turquoise4"),
-  "fast-hpc" = c("orangered4", "orangered3"),
+  "fast-hpc" = c("burlywood4", "burlywood3"),
+  "hpc-cached" = c("orangered4", "orangered3"),
   "hpc3" = c("black", "grey"),
   "hpc4" = c("blue", "dodgerblue4"),
   "none" = c("darkmagenta", "deeppink4"),
@@ -74,6 +81,7 @@ conf.pc.labels = list(
   "hpc" = "HPC",
   "hpc-or" = "HPC-OR",
   "fast-hpc" = "HPC-fast",
+  "hpc-cached" = "HPC-cached",
   "hpc3" = "HPC-mmpc",
   "hpc4" = "HPC-tabu",
   "none" = "none",

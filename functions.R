@@ -341,32 +341,47 @@ learn.skeleton = function(params) {
     order = get(load(paste("samples/", filename, "_order_", p, ".rda", sep="")))
     
     time = system.time((
-      skeleton = switch(method,
-            "mmpc" = mmpc(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE),
-            "hpc" = hpc(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE,
-                  nbr.join="AND"),
-            "fast-hpc" = hpc(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE,
-                  nbr.join="AND", nbr.method="fast.iapc"),
-            "hpc-or" = hpc(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE,
-                  nbr.join="OR"),
-            "hpc3" = hpc.3(x = training[, order], test = test, alpha = alpha,
-                           optimized = FALSE, strict = FALSE, undirected = TRUE),
-            "hpc4" = hpc.4(x = training[, order], test = test, alpha = alpha,
-                           optimized = FALSE, strict = FALSE, undirected = TRUE,
-                           nbr.join = "AND"),
-            "iamb" = iamb(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE),
-            "inter-iamb" = inter.iamb(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE),
-            "fast-iamb" = fast.iamb(x = training[, order], test = test, alpha = alpha,
-                  optimized = FALSE, strict = FALSE, undirected = TRUE),
-            "truedag" = skeleton(bn.net(get(load(paste("./networks/", target, ".rda", sep="")))))
-                        )
-      ))
+      skeleton = switch(
+        method,
+        "mmpc" = mmpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE),
+        "hpc" = hpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join="AND", pc.method="inter.iapc"),
+        "hpc-or" = hpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join="OR", pc.method="inter.iapc"),
+        "fast-hpc" = hpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join="AND", pc.method="fast.iapc"),
+        "hpc-cached" = hpc.cached(
+          x = training[, order], test = test, alpha = alpha,
+          strict = FALSE, undirected = TRUE,
+          pc.method="inter.iapc"),
+        "hpc3" = hpc.3(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE),
+        "hpc4" = hpc.4(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join = "AND"),
+        "iamb" = iamb(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE),
+        "inter-iamb" = inter.iamb(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE),
+        "fast-iamb" = fast.iamb(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE),
+        "truedag" = skeleton(
+          bn.net(get(load(paste("./networks/", target, ".rda", sep=""))))),
+        stop("Unknown method : ", method)
+      )))
     
     dir.create(paste("models/skeleton/", method, "/", test, "/", alpha, sep=""), recursive = TRUE, showWarnings = FALSE)
     
