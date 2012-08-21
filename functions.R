@@ -372,6 +372,11 @@ learn.skeleton = function(params) {
     
     save(skeleton, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_skeleton.rda", sep=""))
     save(time, file=paste("models/skeleton/", method, "/", test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep=""))
+    
+    m = boost.mutex("bayes-benchmark")
+    lock(m)
+    cat("skeleton ", method, " ", test, " ", alpha, " ", filename, " p", p, " - ", time["user.self"], "\n", file="models/progress", append=TRUE, sep="")
+    unlock(m)
 
   }
 
@@ -413,6 +418,11 @@ learn.dag = function(params) {
   
   save(dag, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_dag.rda", sep=""))
   save(time, file=paste("models/dag/", method, "/", fromMethod, "/", test, "/", alpha, "/", filename, "_p", p, "_time.rda", sep=""))
+                        
+  m = boost.mutex("bayes-benchmark")
+  lock(m)
+  cat("dag ", method, " ", test, " ", alpha, " ", filename, " p", p, " - ", time["user.self"], "\n", file="models/progress", append=TRUE, sep="")
+  unlock(m)
   
 }#LEARN.DAG
 

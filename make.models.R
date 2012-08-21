@@ -2,6 +2,8 @@ source("conf.R")
 source("functions.R")
 library("snow")
 
+cat("", file="models/progress")
+
 # Learn skeletons, constraint-based
 for (target in names(conf.networks)) {
   
@@ -34,6 +36,7 @@ for (target in names(conf.networks)) {
   if(length(todo) > 0) {
     cl = makeCluster(conf.nbcores)
     clusterEvalQ(cl, library("bnlearn"))
+    clusterEvalQ(cl, library("synchronicity"))
     clusterApplyLB(cl, todo, learn.skeleton)
     stopCluster(cl)
   }
@@ -78,6 +81,7 @@ for (target in names(conf.networks)) {
   if(length(todo) > 0) {
     cl = makeCluster(conf.nbcores)
     clusterEvalQ(cl, library("bnlearn"))
+    clusterEvalQ(cl, library("synchronicity"))
     clusterEvalQ(cl, source("functions.R"))
     clusterApplyLB(cl, todo, learn.dag)
     stopCluster(cl)
