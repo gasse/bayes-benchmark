@@ -1,4 +1,4 @@
-library("bnlearn")
+require("bnlearn")
 
 gen.discrete.bn = function(vars, parents) {
   bn = empty.graph(vars)
@@ -86,72 +86,73 @@ gen.discrete.bn.fitted = function(vars, dims, parents, probs) {
 }
 
 gen.dataset.from.fitted.bn = function(bn.fitted, n) {
-  
-  data = list()
-  nodes_to_process = names(bn.fitted)
-  
-  while (length(nodes_to_process) > 0)
-    for (node in nodes_to_process) {
-      
-      parents = bn.fitted[[node]]$parents
-      dims = names(margin.table(bn.fitted[[node]]$prob, 1))
-      probs = bn.fitted[[node]]$prob
-      
-      # All parents must have been processed
-      parents.ok = TRUE
-      for (parent in parents)
-        if(is.null(data[[parent]])) {
-          parents.ok = FALSE
-          next
-        }
-      if (!parents.ok)
-        next
-      
-      nodes_to_process = setdiff(nodes_to_process, node)
-      
-      # Simplest case : no parents
-      if (length(parents) == 0) {
-        data[[node]] = sample(dims, n, prob = probs, replace = TRUE)
-        next
-      }
-      
-      # Fill with parent's values
-      par_dims = NULL
-      for (parent in parents) {
-        if (length(par_dims) == 0)
-          par_dims = names(margin.table(bn.fitted[[parent]]$prob, 1))
-        else {
-          tmp = c()
-          for (dim1 in par_dims) {
-            for (dim2 in names(margin.table(bn.fitted[[parent]]$prob, 1))) {
-              tmp = c(tmp, paste(dim1, ":", dim2, sep=""))
-            }
-          }
-          par_dims = tmp
-        }
-        if (is.null(data[[node]]))
-          data[[node]] = data[[parent]]
-        else
-          data[[node]] = apply(cbind(data[[node]], data[[parent]]), 1, paste, collapse = ":")
-      }
-      
-      # Transform parent's values
-      k = 0
-      for (dim in par_dims) {
-        data[[node]][data[[node]] == dim] = sample(
-              dims,
-              length(which(data[[node]] == dim)),
-              prob = probs[(k * length(dims) + 1):((k + 1) * length(dims))],
-              replace = TRUE)
-        k = k + 1
-      }
-    }
-  
-  for (node in names(bn.fitted)) {
-    data[[node]] = factor(data[[node]], dimnames(bn.fitted[[node]]$prob)[[1]])
-  }
-  
-  return(as.data.frame(data))
+#   
+#   data = list()
+#   nodes_to_process = names(bn.fitted)
+#   
+#   while (length(nodes_to_process) > 0)
+#     for (node in nodes_to_process) {
+#       
+#       parents = bn.fitted[[node]]$parents
+#       dims = names(margin.table(bn.fitted[[node]]$prob, 1))
+#       probs = bn.fitted[[node]]$prob
+#       
+#       # All parents must have been processed
+#       parents.ok = TRUE
+#       for (parent in parents)
+#         if(is.null(data[[parent]])) {
+#           parents.ok = FALSE
+#           next
+#         }
+#       if (!parents.ok)
+#         next
+#       
+#       nodes_to_process = setdiff(nodes_to_process, node)
+#       
+#       # Simplest case : no parents
+#       if (length(parents) == 0) {
+#         data[[node]] = sample(dims, n, prob = probs, replace = TRUE)
+#         next
+#       }
+#       
+#       # Fill with parent's values
+#       par_dims = NULL
+#       for (parent in parents) {
+#         if (length(par_dims) == 0)
+#           par_dims = names(margin.table(bn.fitted[[parent]]$prob, 1))
+#         else {
+#           tmp = c()
+#           for (dim1 in par_dims) {
+#             for (dim2 in names(margin.table(bn.fitted[[parent]]$prob, 1))) {
+#               tmp = c(tmp, paste(dim1, ":", dim2, sep=""))
+#             }
+#           }
+#           par_dims = tmp
+#         }
+#         if (is.null(data[[node]]))
+#           data[[node]] = data[[parent]]
+#         else
+#           data[[node]] = apply(cbind(data[[node]], data[[parent]]), 1, paste, collapse = ":")
+#       }
+#       
+#       # Transform parent's values
+#       k = 0
+#       for (dim in par_dims) {
+#         data[[node]][data[[node]] == dim] = sample(
+#               dims,
+#               length(which(data[[node]] == dim)),
+#               prob = probs[(k * length(dims) + 1):((k + 1) * length(dims))],
+#               replace = TRUE)
+#         k = k + 1
+#       }
+#     }
+#   
+#   for (node in names(bn.fitted)) {
+#     data[[node]] = factor(data[[node]], dimnames(bn.fitted[[node]]$prob)[[1]])
+#   }
+#   
+#   return(as.data.frame(data))
+  return(.Call("rbn_discrete", fitted = bn.fitted, n = as.integer(n), debug = FALSE, PACKAGE = "bnlearn"))
 }
 
 gen.dataset = function(vars, dims, parents, probs, n) {

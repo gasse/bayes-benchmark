@@ -164,15 +164,15 @@ for(target in c(names(conf.networks), "all")) {
     graph.plot.all()
     dev.off()
     
-    # Raw boxplots
-    for (method in unique(res_disp$method)) {
-      png(paste(folder, "/", file, "_", method, "_", phase, "_", measure, ".png", sep=""))
-      par(disp.pars.png)
-      by = y[res_disp$method == method]
-      bx = x[res_disp$method == method]
-      boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
-      dev.off()
-    }
+#     # Raw boxplots
+#     for (method in unique(res_disp$method)) {
+#       png(paste(folder, "/", file, "_", method, "_", phase, "_", measure, ".png", sep=""))
+#       par(disp.pars.png)
+#       by = y[res_disp$method == method]
+#       bx = x[res_disp$method == method]
+#       boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
+#       dev.off()
+#     }
     
     # Increase factor boxplots
     if(!is.null(conf.pc.base.method))

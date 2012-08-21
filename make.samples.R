@@ -5,7 +5,7 @@ for (target in names(conf.networks)) {
   
   set.seed(conf.seed)
   for (size in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
+    for (rep in conf.trainingreps) {
       
       filename = paste(target, "_", size, "_", rep, "_training", sep="")
 
@@ -16,7 +16,7 @@ for (target in names(conf.networks)) {
     }
   }
   for (size in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
+    for (rep in conf.trainingreps) {
       
       filename = paste(target, "_", size, "_", rep, "_test", sep="")
       
@@ -32,8 +32,8 @@ for (target in names(conf.networks)) {
 for (target in names(conf.networks)) {
   set.seed(conf.seed)
   for (size in conf.trainingsizes) {
-    for (rep in 1:conf.trainingreps) {
-      for (i in 1:conf.trainingpermuts) {
+    for (rep in conf.trainingreps) {
+      for (i in conf.trainingpermuts) {
         order = sample(1:length(conf.networks[[target]]))
         save(order, file=paste("samples/", target, "_", size, "_", rep, "_order_", i, ".rda", sep=""))
       }
