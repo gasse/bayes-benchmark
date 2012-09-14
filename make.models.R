@@ -8,7 +8,7 @@ if (conf.progress.tracking) {
   cat("", file=progress.file)
   cat("cb methods:", conf.pc.methods, "\n", file=progress.file, append=TRUE)
   cat("ci tests:", conf.tests, "\n", file=progress.file, append=TRUE)
-  cat("ss methods:", conf.pc.methods, "\n", file=progress.file, append=TRUE)
+  cat("ss methods:", conf.ss.methods, "\n", file=progress.file, append=TRUE)
   cat("networks:", names(conf.networks), "\n", file=progress.file, append=TRUE)
   cat("sample sizes:", conf.trainingsizes, "\n", file=progress.file, append=TRUE)
   cat("alpha thresholds:", conf.alphas, "\n", file=progress.file, append=TRUE)
