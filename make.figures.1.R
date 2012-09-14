@@ -49,42 +49,50 @@ for(target in c(names(conf.networks), "all")) {
   
   title = "Euclidian distance\n(lower is better)"; measure = "skel_error"; ylab="measure"
   y = res_disp[, "error"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, sqrt(2))
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values)) # ylim = c(0, sqrt(2))
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "Recall\n(higher is better)"; measure = "skel_recall"; ylab="measure"
   y = res_disp[, "recall"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "Precision\n(higher is better)"; measure = "skel_precision"; ylab="measure"
   y = res_disp[, "precision"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "Specificity\n(higher is better)"; measure = "skel_specificity"; ylab="measure"
   y = res_disp[, "specificity"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), 1) # ylim = c(0, 1)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "False positive rate\n(lower is better)"; measure = "skel_fpr"; ylab="rate"
   y = 1 - res_disp[, "specificity"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "False negative rate\n(lower is better)"; measure = "skel_fnr"; ylab="rate"
   y = 1 - res_disp[, "recall"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(0, 1)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values)) # ylim = c(0, 1)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "Restriction time (CB)"; measure = "time_constraint"; ylab="time in seconds"
   y = res_disp[, "constraint.time.user"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
   title = "Number of statistical tests"; measure = "nbtests"; ylab="calls"
   y = res_disp[, "nbtests"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
+  y.values = aggregate(y, list(x, res_disp$method), mean)$x
+  ylim = c(min(y.values), max(y.values) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
 
   for (axis in yaxises) {
