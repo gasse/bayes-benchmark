@@ -43,7 +43,7 @@ for (network in c(
 }
 
 conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000)
-conf.pc.methods = c("mmpc", "hpc", "hpc-or", "hpc-cached")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc-cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
+conf.pc.methods = c("mmpc", "hpc")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc.cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 1:10
@@ -59,6 +59,8 @@ conf.max.tabu = 15
 conf.restart = 0
 conf.perturb = 0
 
+conf.progress.tracking = TRUE
+
 conf.pc.colors = list(
   "iamb" = c("burlywood4", "burlywood3"),
   "inter-iamb" = c("turquoise3", "turquoise4"),
@@ -67,7 +69,7 @@ conf.pc.colors = list(
   "hpc" = c("darkgreen", "forestgreen"),
   "hpc-or" = c("turquoise3", "turquoise4"),
   "fast-hpc" = c("burlywood4", "burlywood3"),
-  "hpc-cached" = c("orangered4", "orangered3"),
+  "hpc.cached" = c("orangered4", "orangered3"),
   "hpc3" = c("black", "grey"),
   "hpc4" = c("blue", "dodgerblue4"),
   "none" = c("darkmagenta", "deeppink4"),
@@ -81,7 +83,7 @@ conf.pc.labels = list(
   "hpc" = "HPC",
   "hpc-or" = "HPC-OR",
   "fast-hpc" = "HPC-fast",
-  "hpc-cached" = "HPC-cached",
+  "hpc.cached" = "HPC-cached",
   "hpc3" = "HPC-mmpc",
   "hpc4" = "HPC-tabu",
   "none" = "none",

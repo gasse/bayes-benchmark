@@ -2,7 +2,21 @@ source("conf.R")
 source("functions.R")
 library("snow")
 
-cat("", file="models/progress")
+if (conf.progress.tracking) {
+  
+  progress.file = paste("models/progress_", format(Sys.time(), "%Y%m%d_%H%M%S"), sep="")
+  cat("", file=progress.file)
+  cat("cb methods:", conf.pc.methods, "\n", file=progress.file, append=TRUE)
+  cat("ci tests:", conf.tests, "\n", file=progress.file, append=TRUE)
+  cat("ss methods:", conf.pc.methods, "\n", file=progress.file, append=TRUE)
+  cat("networks:", names(conf.networks), "\n", file=progress.file, append=TRUE)
+  cat("sample sizes:", conf.trainingsizes, "\n", file=progress.file, append=TRUE)
+  cat("alpha thresholds:", conf.alphas, "\n", file=progress.file, append=TRUE)
+  cat("repetitions:", conf.trainingreps, "\n", file=progress.file, append=TRUE)
+  cat("permutations:", conf.trainingpermuts, "\n", file=progress.file, append=TRUE)
+  cat("\n", file=progress.file, append=TRUE)
+  
+}
 
 # Learn skeletons, constraint-based
 for (target in names(conf.networks)) {
@@ -36,7 +50,11 @@ for (target in names(conf.networks)) {
   if(length(todo) > 0) {
     cl = makeCluster(conf.nbcores)
     clusterEvalQ(cl, library("bnlearn"))
-    clusterEvalQ(cl, library("synchronicity"))
+    clusterExport(cl, "conf.progress.tracking")
+    if (conf.progress.tracking) {
+      clusterEvalQ(cl, library("synchronicity"))
+      clusterExport(cl, "progress.file")
+    }
     clusterApplyLB(cl, todo, learn.skeleton)
     stopCluster(cl)
   }
@@ -81,8 +99,12 @@ for (target in names(conf.networks)) {
   if(length(todo) > 0) {
     cl = makeCluster(conf.nbcores)
     clusterEvalQ(cl, library("bnlearn"))
-    clusterEvalQ(cl, library("synchronicity"))
     clusterEvalQ(cl, source("functions.R"))
+    clusterExport(cl, "conf.progress.tracking")
+    if (conf.progress.tracking) {
+      clusterEvalQ(cl, library("synchronicity"))
+      clusterExport(cl, "progress.file")
+    }
     clusterApplyLB(cl, todo, learn.dag)
     stopCluster(cl)
   }
