@@ -447,7 +447,7 @@ learn.dag = function(params) {
 }#LEARN.DAG
 
 gen.rep.bn.fit = function(bn, nb) {
-  bn.rep = structure(list(), class = "bn.fit")
+  bn.rep = list()
   for (node in names(bn)) {
     for (i in 1:nb) {
       node.new = paste(node, i, sep="_")
@@ -459,6 +459,7 @@ gen.rep.bn.fit = function(bn, nb) {
         bn.rep[[node.new]]$children = paste(bn[[node]]$children, i, sep="_")
     }
   }
+  bn.rep = structure(bn.rep, class = "bn.fit")
   return(bn.rep)
 }
 
