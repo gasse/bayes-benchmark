@@ -359,10 +359,18 @@ learn.skeleton = function(params) {
           x = training[, order], test = test, alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="fast.iapc"),
+        "hpc-fdr" = hpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join="AND", pc.method="fdr.iapc"),
         "hpc.cached" = hpc.cached(
           x = training[, order], test = test, alpha = alpha,
           strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="inter.iapc"),
+        "hpc.cached-fdr" = hpc.cached(
+          x = training[, order], test = test, alpha = alpha,
+          strict = FALSE, undirected = TRUE,
+          nbr.join="AND", pc.method="fdr.iapc"),
         "hpc3" = hpc.3(
           x = training[, order], test = test, alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE),

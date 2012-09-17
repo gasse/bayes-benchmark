@@ -30,20 +30,30 @@ conf.dags = list()
 # 5000
 
 for (network in c(
-  "child", "insurance", "alarm", "mildew", "hailfinder", "munin1"
+#   "child", "insurance", "alarm", "hailfinder", "mildew"
+  "munin1", "pigs", "link"
+  
 #   "alarm", "alarm3", "alarm5", "alarm10",
 #   "child", "child3", "child5", "child10",
 #   "insurance", "insurance3", "insurance5", "insurance10",
 #   "tsam.alarm1" , "tsam.alarm3", "tsam.alarm5", "tsam.alarm10",
 #   "tsam.child1", "tsam.child3", "tsam.child5", "tsam.child10",
 #   "tsam.insurance1", "tsam.insurance3", "tsam.insurance5", "tsam.insurance10"
+
+#   "tsam.alarm1", "tsam.alarm3", "tsam.alarm5", "tsam.alarm10",
+#   "tsam.child1", "tsam.child3", "tsam.child5", "tsam.child10",
+#   "tsam.hailfinder1", "tsam.hailfinder3", "tsam.hailfinder5", "tsam.hailfinder10",
+#   "tsam.insurance1", "tsam.insurance3", "tsam.insurance5", "tsam.insurance10",
+#   "tsam.barley","tsam.mildew", "tsam.munin1", "tsam.pigs",
+#   "tsam.link"
+#   "tsam.gene"
   )) {
   conf.networks[[network]] = get(load(file=paste("networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(50, 100, 200, 500, 1500, 5000)
-conf.pc.methods = c("mmpc", "hpc")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc.cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
+conf.trainingsizes =  c(50, 100, 200, 500, 1000, 2000, 5000)
+conf.pc.methods = c("mmpc", "hpc", "hpc-fdr", "hpc.cached", "hpc.cached-fdr")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc.cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 1:10
@@ -68,8 +78,10 @@ conf.pc.colors = list(
   "mmpc" = c("red", "red"),
   "hpc" = c("darkgreen", "forestgreen"),
   "hpc-or" = c("turquoise3", "turquoise4"),
+  "hpc-fdr" = c("turquoise3", "turquoise4"),
   "fast-hpc" = c("burlywood4", "burlywood3"),
   "hpc.cached" = c("orangered4", "orangered3"),
+  "hpc.cached-fdr" = c("blue", "dodgerblue4"),
   "hpc3" = c("black", "grey"),
   "hpc4" = c("blue", "dodgerblue4"),
   "none" = c("darkmagenta", "deeppink4"),
@@ -82,8 +94,10 @@ conf.pc.labels = list(
   "mmpc" = "MMPC",
   "hpc" = "HPC",
   "hpc-or" = "HPC-OR",
+  "hpc-fdr" = "FDR-HPC",
   "fast-hpc" = "HPC-fast",
   "hpc.cached" = "HPC-cached",
+  "hpc.cached-fdr" = "FDR-HPC-cached",
   "hpc3" = "HPC-mmpc",
   "hpc4" = "HPC-tabu",
   "none" = "none",
