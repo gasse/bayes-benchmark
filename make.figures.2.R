@@ -158,11 +158,11 @@ for(target in c(names(conf.networks), "all")) {
     par(disp.pars.png)
     graph.plot.all()
     dev.off()
-    postscript(paste(folder, "/", file, "_all_", phase, "_", measure, ".eps", sep=""),
-               horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
-    par(disp.pars.eps)
-    graph.plot.all()
-    dev.off()
+#     postscript(paste(folder, "/", file, "_all_", phase, "_", measure, ".eps", sep=""),
+#                horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+#     par(disp.pars.eps)
+#     graph.plot.all()
+#     dev.off()
     
 #     # Raw boxplots
 #     for (method in unique(res_disp$method)) {
@@ -183,13 +183,13 @@ for(target in c(names(conf.networks), "all")) {
         bx = x[res_disp$method == method]
         boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
         dev.off()
-        postscript(paste(folder, "/", file, "_%inc_", method, "_", phase, "_", measure, ".eps", sep=""),
-                   horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
-        par(disp.pars.eps)
-        by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
-        bx = x[res_disp$method == method]
-        boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
-        dev.off()
+#         postscript(paste(folder, "/", file, "_%inc_", method, "_", phase, "_", measure, ".eps", sep=""),
+#                    horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+#         par(disp.pars.eps)
+#         by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
+#         bx = x[res_disp$method == method]
+#         boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
+#         dev.off()
       }
   }
 }
