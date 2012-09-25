@@ -347,6 +347,9 @@ learn.skeleton = function(params) {
         "mmpc" = mmpc(
           x = training[, order], test = test, alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE),
+        "mmpc-bt" = mmpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = TRUE, strict = FALSE, undirected = TRUE),
         "hpc" = hpc(
           x = training[, order], test = test, alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
@@ -362,6 +365,14 @@ learn.skeleton = function(params) {
         "hpc-fdr" = hpc(
           x = training[, order], test = test, alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join="AND", pc.method="fdr.iapc"),
+        "hpc-fdr-or" = hpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          nbr.join="OR", pc.method="fdr.iapc"),
+        "hpc-fdr-bt" = hpc(
+          x = training[, order], test = test, alpha = alpha,
+          optimized = TRUE, strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="fdr.iapc"),
         "hpc.cached" = hpc.cached(
           x = training[, order], test = test, alpha = alpha,
@@ -400,7 +411,7 @@ learn.skeleton = function(params) {
     if (conf.progress.tracking) {
       m = boost.mutex("bayes-benchmark")
       lock(m)
-      cat("skeleton ", target, " ", method, " ", test, " ", alpha, " ", size, " r", rep, " p", p, " - ", time["user.self"], "\n", file=progress.file, append=TRUE, sep="")
+      cat(format(Sys.time(), "%Y.%m.%d_%H:%M:%S"), " skeleton ", target, " ", method, " ", test, " ", alpha, " ", size, " r", rep, " p", p, " - ", time["user.self"], "\n", file=progress.file, append=TRUE, sep="")
       unlock(m)
     }
 
@@ -448,7 +459,7 @@ learn.dag = function(params) {
   if (conf.progress.tracking) {
     m = boost.mutex("bayes-benchmark")
     lock(m)
-    cat("dag ", target, " ", fromMethod, " ", method, " ", test, " ", alpha, " ", size, " r", rep, " p", p, " - ", time["user.self"], "\n", file=progress.file, append=TRUE, sep="")
+    cat(format(Sys.time(), "%Y.%m.%d_%H:%M:%S"), " dag ", target, " ", fromMethod, " ", method, " ", test, " ", alpha, " ", size, " r", rep, " p", p, " - ", time["user.self"], "\n", file=progress.file, append=TRUE, sep="")
     unlock(m)
   }
   

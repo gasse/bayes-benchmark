@@ -30,8 +30,9 @@ conf.dags = list()
 # 5000
 
 for (network in c(
-#   "child", "insurance", "alarm", "hailfinder", "mildew"
-  "munin1", "pigs", "link"
+  "child", "insurance", "alarm", "hailfinder", "mildew",
+  "munin1"
+#   "pigs", "link"
   
 #   "alarm", "alarm3", "alarm5", "alarm10",
 #   "child", "child3", "child5", "child10",
@@ -53,7 +54,11 @@ for (network in c(
 }
 
 conf.trainingsizes =  c(50, 100, 200, 500, 1000, 2000, 5000)
-conf.pc.methods = c("mmpc", "hpc", "hpc-fdr", "hpc.cached", "hpc.cached-fdr")# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc.cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
+conf.pc.methods = c(
+#   "mmpc-bt",
+#   "mmpc", "hpc", "hpc-fdr", "hpc.cached", "hpc.cached-fdr",
+  "hpc-fdr-bt"
+  )# c("truedag", "none", "mmpc", "hpc", "hpc-or", "fast-hpc", "hpc.cached", "hpc3", "hpc4", "iamb", "inter-iamb", "fast-iamb")
 conf.tests = "mi-h"# c("mi-h", "pf-mi-h")
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 1:10
@@ -76,12 +81,15 @@ conf.pc.colors = list(
   "inter-iamb" = c("turquoise3", "turquoise4"),
   "fast-iamb" = c("orangered4", "orangered3"),
   "mmpc" = c("red", "red"),
+  "mmpc-bt" = c("orangered4", "orangered3"),
   "hpc" = c("darkgreen", "forestgreen"),
   "hpc-or" = c("turquoise3", "turquoise4"),
-  "hpc-fdr" = c("turquoise3", "turquoise4"),
+  "hpc-fdr" = c("burlywood4", "burlywood3"),
+  "hpc-fdr-or" = c("darkorange", "darkorange3"),
+  "hpc-fdr-bt" = c("darkmagenta", "deeppink4"),
   "fast-hpc" = c("burlywood4", "burlywood3"),
-  "hpc.cached" = c("orangered4", "orangered3"),
-  "hpc.cached-fdr" = c("blue", "dodgerblue4"),
+  "hpc.cached" = c("blue", "dodgerblue4"),
+  "hpc.cached-fdr" = c("turquoise3", "turquoise4"),
   "hpc3" = c("black", "grey"),
   "hpc4" = c("blue", "dodgerblue4"),
   "none" = c("darkmagenta", "deeppink4"),
@@ -92,12 +100,15 @@ conf.pc.labels = list(
   "inter-iamb" = "Inter-IAMB",
   "fast-iamb" = "Fast-IAMB",
   "mmpc" = "MMPC",
+  "mmpc-bt" = "MMPC-BT",
   "hpc" = "HPC",
   "hpc-or" = "HPC-OR",
-  "hpc-fdr" = "FDR-HPC",
+  "hpc-fdr" = "HPC-FDR",
+  "hpc-fdr-or" = "HPC-FDR-OR",
+  "hpc-fdr-bt" = "HPC-FDR-BT",
   "fast-hpc" = "HPC-fast",
   "hpc.cached" = "HPC-cached",
-  "hpc.cached-fdr" = "FDR-HPC-cached",
+  "hpc.cached-fdr" = "HPC-cached-FDR",
   "hpc3" = "HPC-mmpc",
   "hpc4" = "HPC-tabu",
   "none" = "none",
