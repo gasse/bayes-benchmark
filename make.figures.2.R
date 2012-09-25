@@ -67,7 +67,7 @@ for(target in c(names(conf.networks), "all")) {
   ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
   
-  title = "BDeu on train data\n(lower is better)"; measure = "score_BDe_train"; ylab = "score"
+  title = "BDeu on train data\n(lower abs. is better)"; measure = "score_BDe_train"; ylab = "score"
   y = res_disp[, "bde.train"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.train"]
@@ -77,7 +77,7 @@ for(target in c(names(conf.networks), "all")) {
   }
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  title = "BIC on train data\n(lower is better)"; measure = "score_BIC_train"; ylab = "score"
+  title = "BIC on train data\n(lower abs. is better)"; measure = "score_BIC_train"; ylab = "score"
   y = res_disp[, "bic.train"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.train"]
@@ -87,7 +87,7 @@ for(target in c(names(conf.networks), "all")) {
   }
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  title = "BDeu on test data\n(lower is better)"; measure = "score_BDe_test"; ylab = "score"
+  title = "BDeu on test data\n(lower abs. is better)"; measure = "score_BDe_test"; ylab = "score"
   y = res_disp[, "bde.test"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bde.test"]
@@ -97,7 +97,7 @@ for(target in c(names(conf.networks), "all")) {
   }
   yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  title = "BIC on test data\n(lower is better)"; measure = "score_BIC_test"; ylab = "score"
+  title = "BIC on test data\n(lower abs. is better)"; measure = "score_BIC_test"; ylab = "score"
   y = res_disp[, "bic.test"]
   ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
   y_truedag = truedag_disp[, "bic.test"]
