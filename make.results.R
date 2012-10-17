@@ -311,39 +311,36 @@ save(skeleton.result, file="results/skeleton.result.rda")
 save(dag.result, file="results/dag.result.rda")
 save(truedag.result, file="results/truedag.result.rda")
 
-global.result = cbind(dag.result, data.frame(
-  "nbtests" = rep(NA, nrow(dag.result)),
-  "constraint.time.user" = rep(NA, nrow(dag.result)),
-  "constraint.time.sys" = rep(NA, nrow(dag.result)),
-  "nbarcs.skel" = rep(NA, nrow(dag.result)),
-  "tp" = rep(NA, nrow(dag.result)),
-  "tn" = rep(NA, nrow(dag.result)),
-  "fp" = rep(NA, nrow(dag.result)),
-  "fn" = rep(NA, nrow(dag.result)),
-  "recall" = rep(NA, nrow(dag.result)),
-  "precision" = rep(NA, nrow(dag.result)),
-  "error" = rep(NA, nrow(dag.result)),
-  "specificity" = rep(NA, nrow(dag.result))))
-
-for (search in unique(dag.result$search)) {
-  global.result[global.result$search == search & global.result$method != "none", "nbtests"] = skeleton.result$nbtests
-  global.result[global.result$search == search & global.result$method != "none", "constraint.time.user"] = skeleton.result$time.user
-  global.result[global.result$search == search & global.result$method != "none", "constraint.time.sys"] = skeleton.result$time.sys
-  global.result[global.result$search == search & global.result$method != "none", "nbarcs.skel"] = skeleton.result$nbarcs.skel
-  global.result[global.result$search == search & global.result$method != "none", "tp"] = skeleton.result$tp
-  global.result[global.result$search == search & global.result$method != "none", "tn"] = skeleton.result$tn
-  global.result[global.result$search == search & global.result$method != "none", "fp"] = skeleton.result$fp
-  global.result[global.result$search == search & global.result$method != "none", "fn"] = skeleton.result$fn
-  global.result[global.result$search == search & global.result$method != "none", "recall"] = skeleton.result$recall
-  global.result[global.result$search == search & global.result$method != "none", "precision"] = skeleton.result$precision
-  global.result[global.result$search == search & global.result$method != "none", "error"] = skeleton.result$error
-  global.result[global.result$search == search & global.result$method != "none", "specificity"] = skeleton.result$specificity
-}
+global.result = merge(
+  dag.result,
+  data.frame(
+    "method" = skeleton.result$method,
+    "network" = skeleton.result$network,
+    "samplesize" = skeleton.result$samplesize,
+    "rep" = skeleton.result$rep,
+    "p" = skeleton.result$p,
+    "alpha" = skeleton.result$alpha,
+    "nbtests" = skeleton.result$nbtests,
+    "nbnodes" = skeleton.result$nbnodes,
+    "constraint.time.user" = skeleton.result$time.user,
+    "constraint.time.sys" = skeleton.result$time.sys,
+    "nbarcs.skel" = skeleton.result$nbarcs.skel,
+    "tp" = skeleton.result$tp,
+    "tn" = skeleton.result$tn,
+    "fp" = skeleton.result$fp,
+    "fn" = skeleton.result$fn,
+    "recall" = skeleton.result$recall,
+    "precision" = skeleton.result$precision,
+    "error" = skeleton.result$error,
+    "specificity" = skeleton.result$specificity),
+  by = c("method", "network", "samplesize", "rep", "p", "alpha"),
+  all=TRUE)
 
 write.csv(global.result, file="./results/global.result.csv")
 
 # Check the results
 #aggregate(skeleton.node.result$network, list(skeleton.node.result$network, skeleton.node.result$method, skeleton.node.result$samplesize), length)
-aggregate(skeleton.result$network, list(skeleton.result$network, skeleton.result$method, skeleton.result$samplesize), length)
-aggregate(dag.result$network, list(dag.result$search, dag.result$network, dag.result$method, dag.result$samplesize), length)
-aggregate(truedag.result$network, list(truedag.result$network, truedag.result$samplesize, truedag.result$p), length)
+table(skeleton.node.result$network, skeleton.node.result$samplesize, skeleton.node.result$p, skeleton.node.result$method)
+table(skeleton.result$network, skeleton.result$samplesize, skeleton.result$p, skeleton.result$method)
+table(dag.result$network, dag.result$samplesize, dag.result$p, dag.result$method, dag.result$search)
+table(truedag.result$network, truedag.result$samplesize, truedag.result$p)

@@ -22,7 +22,6 @@ if (conf.progress.tracking) {
 for (target in names(conf.networks)) {
   
   todo = list()
-  set.seed(conf.seed)
   for (method in conf.pc.methods) {
     for (test in conf.tests) {
       for (alpha in conf.alphas) {
