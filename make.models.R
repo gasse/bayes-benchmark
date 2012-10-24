@@ -47,7 +47,7 @@ for (target in names(conf.networks)) {
   }
   
   if(length(todo) > 0) {
-    cl = makeCluster(conf.nbcores)
+    cl = makeSOCKcluster(conf.nbcores)
     clusterEvalQ(cl, library("bnlearn"))
     clusterExport(cl, "conf.progress.tracking")
     if (conf.progress.tracking) {
@@ -96,7 +96,7 @@ for (target in names(conf.networks)) {
   }
   
   if(length(todo) > 0) {
-    cl = makeCluster(conf.nbcores)
+    cl = makeSOCKcluster(conf.nbcores)
     clusterEvalQ(cl, library("bnlearn"))
     clusterEvalQ(cl, source("functions.R"))
     clusterExport(cl, "conf.progress.tracking")
