@@ -1,5 +1,6 @@
 source("conf.R")
 global.result = read.csv(file="./results/global.result.csv")
+global.result$network = factor(global.result$network, levels=unique(global.result$network[order(global.result$nbnodes)]))
 
 make.samplesize.ratio.table = function(results, x, method) {
   
@@ -35,14 +36,43 @@ make.samplesize.ratio.table = function(results, x, method) {
     mean = c(detail[, 3], average[, 2]),
     sd = c(detail[, 4], average[, 3]))
   
-  return(data.frame(
-    "Network" = unique(res$net),
-    "SS. 50" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "50", "mean"], res[res$ss == "50", "sd"]),
-    "SS. 100" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "100", "mean"], res[res$ss == "100", "sd"]),
-    "SS. 200" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "200", "mean"], res[res$ss == "200", "sd"]),
-    "SS. 500" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "500", "mean"], res[res$ss == "500", "sd"]),
-    "SS. 1500" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "1500", "mean"], res[res$ss == "1500", "sd"]),
-    "SS. 5000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "5000", "mean"], res[res$ss == "5000", "sd"])))    
+#   return(data.frame(
+#     "Network" = unique(res$net),
+#     "SS. 50" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "50", "mean"], res[res$ss == "50", "sd"]),
+#     "SS. 100" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "100", "mean"], res[res$ss == "100", "sd"]),
+#     "SS. 200" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "200", "mean"], res[res$ss == "200", "sd"]),
+#     "SS. 500" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "500", "mean"], res[res$ss == "500", "sd"]),
+#     "SS. 1000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "1000", "mean"], res[res$ss == "1000", "sd"]),
+#     "SS. 2000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "2000", "mean"], res[res$ss == "2000", "sd"]),
+#     "SS. 5000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "5000", "mean"], res[res$ss == "5000", "sd"]),
+#     "SS. 10000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "10000", "mean"], res[res$ss == "10000", "sd"]),
+#     "SS. 20000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "20000", "mean"], res[res$ss == "20000", "sd"]),
+#     "SS. 50000" = sprintf("%1.2f \\(\\pm\\)%1.1f", res[res$ss == "50000", "mean"], res[res$ss == "50000", "sd"])))  
+  
+  df = data.frame(
+      "Network" = rep(unique(res$net), 2),
+      "SS. 50" = c(sprintf("%1.2f", res[res$ss == "50", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "50", "sd"])),
+      "SS. 100" = c(sprintf("%1.2f", res[res$ss == "100", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "50", "sd"])),
+      "SS. 200" = c(sprintf("%1.2f", res[res$ss == "200", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "200", "sd"])),
+      "SS. 500" = c(sprintf("%1.2f", res[res$ss == "500", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "500", "sd"])),
+      "SS. 1000" = c(sprintf("%1.2f", res[res$ss == "1000", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "1000", "sd"])),
+      "SS. 2000" = c(sprintf("%1.2f", res[res$ss == "2000", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "2000", "sd"])),
+      "SS. 5000" = c(sprintf("%1.2f", res[res$ss == "5000", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "5000", "sd"])),
+      "SS. 10000" = c(sprintf("%1.2f", res[res$ss == "10000", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "10000", "sd"])),
+      "SS. 20000" = c(sprintf("%1.2f", res[res$ss == "20000", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "20000", "sd"])),
+      "SS. 50000" = c(sprintf("%1.2f", res[res$ss == "50000", "mean"]),
+                   sprintf("\\(\\pm\\)%1.1f", res[res$ss == "50000", "sd"])))
+
+  return(df[order(rep(1:(nrow(df)/2), 2)), ])
 }
 
 make.samplesize.raw.table = function(results, x, method) {
@@ -81,8 +111,12 @@ make.samplesize.raw.table = function(results, x, method) {
     "SS. 100" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "100", "mean"], res[res$ss == "100", "sd"]),
     "SS. 200" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "200", "mean"], res[res$ss == "200", "sd"]),
     "SS. 500" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "500", "mean"], res[res$ss == "500", "sd"]),
-    "SS. 1500" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "1500", "mean"], res[res$ss == "1500", "sd"]),
-    "SS. 5000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "5000", "mean"], res[res$ss == "5000", "sd"])))    
+    "SS. 1000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "1000", "mean"], res[res$ss == "1000", "sd"]),
+    "SS. 2000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "2000", "mean"], res[res$ss == "2000", "sd"]),
+    "SS. 5000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "5000", "mean"], res[res$ss == "5000", "sd"]),
+    "SS. 10000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "10000", "mean"], res[res$ss == "10000", "sd"]),
+    "SS. 20000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "20000", "mean"], res[res$ss == "20000", "sd"]),
+    "SS. 50000" = sprintf("%1.0f \\(\\pm\\)%1.0f", res[res$ss == "50000", "mean"], res[res$ss == "50000", "sd"])))    
 }
 
 table.samplesize.to.latex = function(table, label, caption) {
@@ -91,21 +125,22 @@ table.samplesize.to.latex = function(table, label, caption) {
   res = paste(res, "\\begin{table}\n", sep="")
   res = paste(res, "  \\label{", label, "}\n", sep="")
   res = paste(res, "  \\caption{", caption, "}\n", sep="")
-  res = paste(res, "  \\begin{tabularx}{\\textwidth}{l X X X X X X X}\n", sep="")
-  res = paste(res, "  \\hline\n", sep="")
-  res = paste(res, "  \\multicolumn{1}{c}{\\multirow{2}{*}{Network}} & \\multicolumn{6}{c}{Sample Size} \\\\ \\cline{2-7}\n", sep="")
-  res = paste(res, "  \\multicolumn{1}{c}{} & \\multicolumn{1}{c}{50} & \\multicolumn{1}{c}{100} & \\multicolumn{1}{c}{200} & \\multicolumn{1}{c}{500} & \\multicolumn{1}{c}{1500} & \\multicolumn{1}{c}{5000} \\\\\n", sep="")
-  res = paste(res, "  \\hline\n", sep="")
+  res = paste(res, "  \\begin{tabularx}{\\textwidth}{lXXXXXXXXXX}\n", sep="")
+  res = paste(res, "    \\hline\n", sep="")
+  res = paste(res, "    \\multicolumn{1}{c}{\\multirow{2}{*}{Network}} & \\multicolumn{10}{c}{Sample Size} \\\\\n", sep="")
+  res = paste(res, "    \\hhline{~----------}\n", sep="")
+  res = paste(res, "    \\multicolumn{1}{c}{} & \\multicolumn{1}{c}{50} & \\multicolumn{1}{c}{100} & \\multicolumn{1}{c}{200} & \\multicolumn{1}{c}{500} & \\multicolumn{1}{c}{1000} & \\multicolumn{1}{c}{2000} & \\multicolumn{1}{c}{5000} & \\multicolumn{1}{c}{10000} & \\multicolumn{1}{c}{20000} & \\multicolumn{1}{c}{50000} \\\\\n", sep="")
+  res = paste(res, "    \\hline\n", sep="")
   for (i in 1:nrow(table)) {
     if(table[i, "Network"] == "all")
-      res = paste(res, "  \\hline\n", sep="")
-    res = paste(res, "  ", table[i, "Network"], sep="")
+      res = paste(res, "    \\hline\n", sep="")
+    res = paste(res, "    ", table[i, "Network"], sep="")
     for (col in names(table)[-1])
       res = paste(res, " & ", table[i, col], sep="")
     res = paste(res, " \\\\\n", sep="")
   }
-  res = paste(res, "  \\hline\n", sep="")
-  res = paste(res, "\\end{tabularx}\n", sep="")
+  res = paste(res, "    \\hline\n", sep="")
+  res = paste(res, "  \\end{tabularx}\n", sep="")
   res = paste(res, "\\end{table}\n", sep="")
   
   return(res)
@@ -200,7 +235,7 @@ tmp.res = global.result
 tmp.res = tmp.res[tmp.res[, "alpha"] == 0.05, ]
 tmp.res = tmp.res[tmp.res[, "network"] %in% names(conf.networks), ]
 
-method = "hpc-and"
+method = "hpc"
 result.tables[["error"]] = make.samplesize.ratio.table(tmp.res, tmp.res[, "error"], method)
 result.tables[["recall"]] = make.samplesize.ratio.table(tmp.res, tmp.res[, "recall"], method)
 result.tables[["precision"]] = make.samplesize.ratio.table(tmp.res, tmp.res[, "precision"], method)
@@ -220,7 +255,7 @@ result.tables[["total.time.raw"]] = make.samplesize.raw.table(tmp.res, tmp.res[,
 result.tables[["constraint.time.raw"]] = make.samplesize.raw.table(tmp.res, tmp.res[, "constraint.time.user"], method)
 result.tables[["search.time.raw"]] = make.samplesize.raw.table(tmp.res, tmp.res[, "search.time.user"], method)
 
-sink("tables_hpc-and.tex")
+sink("tables_ecml.tex")
 cat(table.datasets.to.latex(result.tables$datasets, "tab:datasets", "Datasets"))
 cat(table.samplesize.to.latex(result.tables$nbtests, "tab:nbtests", "Number of CI tests increase factor (constraint-based)"))
 cat(table.samplesize.to.latex(result.tables$error, "tab:error", "Skeleton error increase factor"))

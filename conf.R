@@ -46,9 +46,11 @@ for (network in c(
   conf.dags[[network]] = bn.net(conf.networks[[network]])
 }
 
-conf.trainingsizes =  c(50, 100, 200, 500, 1000, 2000, 5000, 10000)
+conf.trainingsizes =  c(50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000)
 conf.pc.methods = c(
   "mmpc", "hpc"
+#   "truedag", "hpc.cached"
+#   "none"
 #   "hpc", "hpc-or", "fast-hpc", "hpc-fdr", "hpc.cached", "hpc.cached-fdr"
 #   "mmpc", "mmpc-bt"
 #   "none", "truedag"
@@ -58,7 +60,7 @@ conf.tests = "mi-h"
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 1:10
 conf.trainingpermuts = 1:1
-conf.testsize = 10000
+conf.testsize = 50000
 conf.seed = 1596841
 conf.nbcores = 2
 
@@ -70,6 +72,7 @@ conf.restart = 0
 conf.perturb = 0
 
 conf.progress.tracking = TRUE
+conf.fig.format = "png"
 
 conf.pc.colors = list(
   "iamb" = c("burlywood4", "burlywood3"),
@@ -88,7 +91,7 @@ conf.pc.colors = list(
   "hpc3" = c("black", "grey"),
   "hpc4" = c("blue", "dodgerblue4"),
   "none" = c("darkmagenta", "deeppink4"),
-  "truedag" = c("darkorange", "darkorange3"))
+  "truedag" = c("black", "grey"))
 
 conf.pc.labels = list(
   "iamb" = "IAMB",
@@ -109,4 +112,4 @@ conf.pc.labels = list(
   "none" = "none",
   "truedag" = "truedag")
 
-conf.pc.base.method = NULL # NULL "mmpc"
+conf.pc.base.method = "mmpc" # NULL "mmpc"

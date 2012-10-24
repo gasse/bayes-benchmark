@@ -321,7 +321,6 @@ global.result = merge(
     "p" = skeleton.result$p,
     "alpha" = skeleton.result$alpha,
     "nbtests" = skeleton.result$nbtests,
-    "nbnodes" = skeleton.result$nbnodes,
     "constraint.time.user" = skeleton.result$time.user,
     "constraint.time.sys" = skeleton.result$time.sys,
     "nbarcs.skel" = skeleton.result$nbarcs.skel,

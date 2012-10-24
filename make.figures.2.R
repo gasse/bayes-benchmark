@@ -45,72 +45,98 @@ for(target in c(names(conf.networks), "all")) {
   
   #-------------------------------------------------------------------------------
   
-  yaxises = list()
+  y.ax = list()
   
-  title = "Maximisation time (SS)"; measure = "time_search"; ylab = "time in seconds"
-  y = res_disp[, "search.time.user"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
+  y.ax[[1]] = list()
+  y.ax[[1]]$title = "Maximisation time (SS)"
+  y.ax[[1]]$title.ratio = "Maximisation time (SS)"
+  y.ax[[1]]$measure = "time_search"
+  y.ax[[1]]$ylab = "mean time in seconds"
+  y.ax[[1]]$y = res_disp[, "search.time.user"]
+  y.ax[[1]]$ylim = c(0, max(aggregate(y.ax[[1]]$y, list(x, res_disp$method), mean)$x) * 1.05)
   
-  title = "Total time"; measure = "time_total"; ylab = "time in seconds"
-  y = res_disp[, "constraint.time.user"] + res_disp[, "search.time.user"]; y[is.na(y)] = res_disp$search.time.user[is.na(y)]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
+  y.ax[[2]] = list()
+  y.ax[[2]]$title = "Total time"
+  y.ax[[2]]$title.ratio = "Total time"
+  y.ax[[2]]$measure = "time_total"
+  y.ax[[2]]$ylab = "mean time in seconds"
+  y.ax[[2]]$y = res_disp[, "constraint.time.user"] + res_disp[, "search.time.user"]
+  y.ax[[2]]$y[is.na(y.ax[[2]]$y)] = res_disp$search.time.user[is.na(y.ax[[2]]$y)]
+  y.ax[[2]]$ylim = c(0, max(aggregate(y.ax[[2]]$y, list(x, res_disp$method), mean)$x) * 1.05)
   
-  title = "Number of scores"; measure = "nbscores"; ylab = "calls"
-  y = res_disp[, "nbscores"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
+  y.ax[[3]] = list()
+  y.ax[[3]]$title = "Number of scores"
+  y.ax[[3]]$title.ratio = "Number of scores"
+  y.ax[[3]]$measure = "nbscores"
+  y.ax[[3]]$ylab = "mean nb calls"
+  y.ax[[3]]$y = res_disp[, "nbscores"]
+  y.ax[[3]]$ylim = c(0, max(aggregate(y.ax[[3]]$y, list(x, res_disp$method), mean)$x) * 1.05)
   
-  title = "Structural Hamming Distance\n(lower is better)"; measure = "score_SHD"; ylab = "distance"
-  y = res_disp[, "shd"]
-  ylim = c(0, max(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05)
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim)
+  y.ax[[4]] = list()
+  y.ax[[4]]$title = "Structural Hamming Distance\n(lower is better)"
+  y.ax[[4]]$title.ratio = "Structural Hamming Distance\n(lower is better)"
+  y.ax[[4]]$measure = "score_SHD"
+  y.ax[[4]]$ylab = "mean distance"
+  y.ax[[4]]$y = res_disp[, "shd"]
+  y.ax[[4]]$ylim = c(0, max(aggregate(y.ax[[4]]$y, list(x, res_disp$method), mean)$x) * 1.05)
   
-  title = "Log. BDeu posterior on train data\n(higher is better)"; measure = "score_BDe_train"; ylab = "score"
-  y = res_disp[, "bde.train"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
-  y_truedag = truedag_disp[, "bde.train"]
+  y.ax[[5]] = list()
+  y.ax[[5]]$title = "log(BDeu post.) on train data\n(higher is better)"
+  y.ax[[5]]$title.ratio = "log(BDeu post.) on train data\n(lower is better)"
+  y.ax[[5]]$measure = "score_BDe_train"
+  y.ax[[5]]$ylab = "mean score"
+  y.ax[[5]]$y = res_disp[, "bde.train"]
+  y.ax[[5]]$ylim = c(min(aggregate(y.ax[[5]]$y, list(x, res_disp$method), mean)$x), max(aggregate(y.ax[[5]]$y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
+  y.ax[[5]]$y_truedag = truedag_disp[, "bde.train"]
   if (!is.null(x_truedag)) {
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
-    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+    y.ax[[5]]$ylim[1] = min(y.ax[[5]]$ylim[1], min(aggregate(y.ax[[5]]$y_truedag, list(x_truedag), mean)$x))
+    y.ax[[5]]$ylim[2] = max(y.ax[[5]]$ylim[2], max(aggregate(y.ax[[5]]$y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  title = "BIC on train data\n(higher is better)"; measure = "score_BIC_train"; ylab = "score"
-  y = res_disp[, "bic.train"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
-  y_truedag = truedag_disp[, "bic.train"]
+  y.ax[[6]] = list()
+  y.ax[[6]]$title = "BIC on train data\n(higher is better)"
+  y.ax[[6]]$title.ratio = "BIC on train data\n(lower is better)"
+  y.ax[[6]]$measure = "score_BIC_train"
+  y.ax[[6]]$ylab = "mean score"
+  y.ax[[6]]$y = res_disp[, "bic.train"]
+  y.ax[[6]]$ylim = c(min(aggregate(y.ax[[6]]$y, list(x, res_disp$method), mean)$x), max(aggregate(y.ax[[6]]$y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
+  y.ax[[6]]$y_truedag = truedag_disp[, "bic.train"]
   if (!is.null(x_truedag)) {
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
-    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+    y.ax[[6]]$ylim[1] = min(y.ax[[6]]$ylim[1], min(aggregate(y.ax[[6]]$y_truedag, list(x_truedag), mean)$x))
+    y.ax[[6]]$ylim[2] = max(y.ax[[6]]$ylim[2], max(aggregate(y.ax[[6]]$y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  title = "BDeu on test data\n(higher is better)"; measure = "score_BDe_test"; ylab = "score"
-  y = res_disp[, "bde.test"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
-  y_truedag = truedag_disp[, "bde.test"]
+  y.ax[[7]] = list()
+  y.ax[[7]]$title = "log(BDeu post.) on test data\n(higher is better)"
+  y.ax[[7]]$title.ratio = "log(BDeu post.) on test data\n(lower is better)"
+  y.ax[[7]]$measure = "score_BDe_test"
+  y.ax[[7]]$ylab = "mean score"
+  y.ax[[7]]$y = res_disp[, "bde.test"]
+  y.ax[[7]]$ylim = c(min(aggregate(y.ax[[7]]$y, list(x, res_disp$method), mean)$x), max(aggregate(y.ax[[7]]$y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
+  y.ax[[7]]$y_truedag = truedag_disp[, "bde.test"]
   if (!is.null(x_truedag)) {
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
-    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+    y.ax[[7]]$ylim[1] = min(y.ax[[7]]$ylim[1], min(aggregate(y.ax[[7]]$y_truedag, list(x_truedag), mean)$x))
+    y.ax[[7]]$ylim[2] = max(y.ax[[7]]$ylim[2], max(aggregate(y.ax[[7]]$y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  title = "BIC on test data\n(higher is better)"; measure = "score_BIC_test"; ylab = "score"
-  y = res_disp[, "bic.test"]
-  ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x), max(aggregate(y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
-  y_truedag = truedag_disp[, "bic.test"]
+  y.ax[[8]] = list()
+  y.ax[[8]]$title = "BIC on test data\n(higher is better)"
+  y.ax[[8]]$title.ratio = "BIC on test data\n(lower is better)"
+  y.ax[[8]]$measure = "score_BIC_test"
+  y.ax[[8]]$ylab = "mean score"
+  y.ax[[8]]$y = res_disp[, "bic.test"]
+  y.ax[[8]]$ylim = c(min(aggregate(y.ax[[8]]$y, list(x, res_disp$method), mean)$x), max(aggregate(y.ax[[8]]$y, list(x, res_disp$method), mean)$x)) # ylim = c(min(aggregate(y, list(x, res_disp$method), mean)$x) * 1.05, 0)
+  y.ax[[8]]$y_truedag = truedag_disp[, "bic.test"]
   if (!is.null(x_truedag)) {
-    ylim[1] = min(ylim[1], min(aggregate(y_truedag, list(x_truedag), mean)$x))
-    ylim[2] = max(ylim[2], max(aggregate(y_truedag, list(x_truedag), mean)$x))
+    y.ax[[8]]$ylim[1] = min(y.ax[[8]]$ylim[1], min(aggregate(y.ax[[8]]$y_truedag, list(x_truedag), mean)$x))
+    y.ax[[8]]$ylim[2] = max(y.ax[[8]]$ylim[2], max(aggregate(y.ax[[8]]$y_truedag, list(x_truedag), mean)$x))
   }
-  yaxises[[length(yaxises) + 1]] = list(title = title, ylab = ylab, measure = measure, y = y, ylim = ylim, y_truedag = y_truedag)
   
-  for (axis in yaxises) {
+  for (axis in y.ax) {
     
     y = axis$y
     title = axis$title
+    title.ratio = axis$title.ratio
     measure = axis$measure
     ylab = axis$ylab
     ylim = axis$ylim
@@ -125,7 +151,7 @@ for(target in c(names(conf.networks), "all")) {
            ylim=ylim,
            xlab=xlab,
            ylab=ylab
-           )
+      )
       title(title)
       
       if (!is.null(y_truedag) && !is.null(x_truedag)) {
@@ -143,7 +169,7 @@ for(target in c(names(conf.networks), "all")) {
           #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
           #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
           #  ,p = 1:5
-          ))
+        ))
         legend.col = c(legend.col, conf.pc.colors[[method]][1])
         legend.pch = c(legend.pch, pch)
         legend.label = c(legend.label, conf.pc.labels[[method]][1])
@@ -153,43 +179,56 @@ for(target in c(names(conf.networks), "all")) {
       legend(max(x) - 2*max(x)/5, ylim[2], legend.label, cex=0.8, col=legend.col, pch=legend.pch);
     }
     
-    # Raw lines, all methods
-    png(paste(folder, "/", file, "__all_", phase, "_", measure, ".png", sep=""))
-    par(disp.pars.png)
-    graph.plot.all()
-    dev.off()
-#     postscript(paste(folder, "/", file, "_all_", phase, "_", measure, ".eps", sep=""),
-#                horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
-#     par(disp.pars.eps)
-#     graph.plot.all()
-#     dev.off()
-    
-#     # Raw boxplots
-#     for (method in unique(res_disp$method)) {
-#       png(paste(folder, "/", file, "_", method, "_", phase, "_", measure, ".png", sep=""))
-#       par(disp.pars.png)
-#       by = y[res_disp$method == method]
-#       bx = x[res_disp$method == method]
-#       boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
-#       dev.off()
-#     }
-    
-    # Increase factor boxplots
-    if(!is.null(conf.pc.base.method))
-      for (method in setdiff(unique(res_disp$method), conf.pc.base.method)) {
-        png(paste(folder, "/", file, "_%inc_", method, "_", phase, "_", measure, ".png", sep=""))
-        par(disp.pars.png)
-        by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
-        bx = x[res_disp$method == method]
-        boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
-        dev.off()
-#         postscript(paste(folder, "/", file, "_%inc_", method, "_", phase, "_", measure, ".eps", sep=""),
-#                    horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
-#         par(disp.pars.eps)
-#         by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
-#         bx = x[res_disp$method == method]
-#         boxplot.factor.fig(bx, by, xlab, ylab, title, conf.pc.colors[[method]][2])
-#         dev.off()
+    if (target == "all") {
+      
+      # Increase factor boxplots
+      if(!is.null(conf.pc.base.method)) {
+        for (method in setdiff(unique(res_disp$method), conf.pc.base.method)) {
+          
+          by = (y[res_disp$method == method] / y[res_disp$method == conf.pc.base.method])
+          bx = x[res_disp$method == method]
+          
+          output.file = paste(folder, "/", file, "_%inc_", method, "_", phase,
+                              "_", measure, ".", conf.fig.format, sep="")
+          if (conf.fig.format == "png") {
+            png(output.file)
+            par(disp.pars.png)
+          }
+          if (conf.fig.format == "eps") {
+            postscript(output.file, horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+            par(disp.pars.eps)
+          }
+          
+          boxplot.factor.fig(bx, by, xlab, ylab, title.ratio, conf.pc.colors[[method]][2])
+          dev.off()
+        }
       }
+      
+    }
+    else {
+      
+      # Raw lines, all methods
+      output.file = paste(folder, "/", file, "__all_", phase, "_", measure, ".", conf.fig.format, sep="")
+      if (conf.fig.format == "png") {
+        png(output.file)
+        par(disp.pars.png)
+      }
+      if (conf.fig.format == "eps") {
+        postscript(output.file, horizontal=FALSE, pointsize=1/1200, paper="special", width=2.5, height=2.5)
+        par(disp.pars.eps)
+      }
+      graph.plot.all()
+      dev.off()
+
+#       # Raw boxplots
+#       for (method in unique(res_disp$method)) {
+#         png(paste(folder, "/", file, "_", method, "_", phase, "_", measure, ".png", sep=""))
+#         par(disp.pars.png)
+#         by = y[res_disp$method == method]
+#         bx = x[res_disp$method == method]
+#         boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
+#         dev.off()
+#       }
+    }
   }
 }
