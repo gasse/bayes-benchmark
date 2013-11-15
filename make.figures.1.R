@@ -47,91 +47,99 @@ for(target in c(names(conf.networks), "all")) {
   
   y.ax = list()
   
-  y.ax[[1]] = list()
-  y.ax[[1]]$title = "Euclidian distance\n(lower is better)"
-  y.ax[[1]]$title.ratio = "Euclidian distance\n(lower is better)"
-  y.ax[[1]]$measure = "skel_error"
-  y.ax[[1]]$ylab = "mean distance"
-  y.ax[[1]]$y = res_disp[, "error"]
-  y.values = aggregate(y.ax[[1]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[1]]$ylim = c(0, max(y.values))
-#   y.ax[[1]]$ylim = c(min(y.values), max(y.values))
-  # y.ax[[1]]$ylim = c(0, sqrt(2))
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "Euclidian distance\n(lower is better)"
+  y.ax[[i]]$title.ratio = "Euclidian distance\n(lower is better)"
+  y.ax[[i]]$measure = "skel_error"
+  y.ax[[i]]$ylab = "mean distance"
+  y.ax[[i]]$y = res_disp[, "error"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(0, max(y.values))
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+  # y.ax[[i]]$ylim = c(0, sqrt(2))
   
-  y.ax[[2]] = list()
-  y.ax[[2]]$title = "Recall\n(higher is better)"
-  y.ax[[2]]$title.ratio = "Recall\n(higher is better)"
-  y.ax[[2]]$measure = "skel_recall"
-  y.ax[[2]]$ylab="mean rate"
-  y.ax[[2]]$y = res_disp[, "recall"]
-  y.values = aggregate(y.ax[[2]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[2]]$ylim = c(min(y.values), 1)
-#   y.ax[[2]]$ylim = c(min(y.values), max(y.values))
-  # y.ax[[2]]$ylim = c(0, 1)
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "Recall\n(higher is better)"
+  y.ax[[i]]$title.ratio = "Recall\n(higher is better)"
+  y.ax[[i]]$measure = "skel_recall"
+  y.ax[[i]]$ylab="mean rate"
+  y.ax[[i]]$y = res_disp[, "recall"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(min(y.values), 1)
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+  # y.ax[[i]]$ylim = c(0, 1)
   
-  y.ax[[3]] = list()
-  y.ax[[3]]$title = "Precision\n(higher is better)"
-  y.ax[[3]]$title.ratio = "Precision\n(higher is better)"
-  y.ax[[3]]$measure = "skel_precision"
-  y.ax[[3]]$ylab="mean rate"
-  y.ax[[3]]$y = res_disp[, "precision"]
-  y.values = aggregate(y.ax[[3]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[3]]$ylim = c(min(y.values), 1)
-#   y.ax[[3]]$ylim = c(min(y.values), max(y.values))
-  # y.ax[[3]]$ylim = c(0, 1)
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "Precision\n(higher is better)"
+  y.ax[[i]]$title.ratio = "Precision\n(higher is better)"
+  y.ax[[i]]$measure = "skel_precision"
+  y.ax[[i]]$ylab="mean rate"
+  y.ax[[i]]$y = res_disp[, "precision"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(min(y.values), 1)
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+  # y.ax[[i]]$ylim = c(0, 1)
   
-  y.ax[[4]] = list()
-  y.ax[[4]]$title = "Specificity\n(higher is better)"
-  y.ax[[4]]$title.ratio = "Specificity\n(higher is better)"
-  y.ax[[4]]$measure = "skel_specificity"
-  y.ax[[4]]$ylab="mean rate"
-  y.ax[[4]]$y = res_disp[, "specificity"]
-  y.values = aggregate(y.ax[[4]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[4]]$ylim = c(min(y.values), 1)
-#   y.ax[[4]]$ylim = c(min(y.values), max(y.values))
-  # y.ax[[4]]$ylim = c(0, 1)
+#   i = length(y.ax) + 1
+#   y.ax[[i]] = list()
+#   y.ax[[i]]$title = "Specificity\n(higher is better)"
+#   y.ax[[i]]$title.ratio = "Specificity\n(higher is better)"
+#   y.ax[[i]]$measure = "skel_specificity"
+#   y.ax[[i]]$ylab="mean rate"
+#   y.ax[[i]]$y = res_disp[, "specificity"]
+#   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+#   y.ax[[i]]$ylim = c(min(y.values), 1)
+# #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+#   # y.ax[[i]]$ylim = c(0, 1)
   
-  y.ax[[5]] = list()
-  y.ax[[5]]$title = "False positive rate\n(lower is better)"
-  y.ax[[5]]$title.ratio = "False positive rate\n(lower is better)"
-  y.ax[[5]]$measure = "skel_fpr"
-  y.ax[[5]]$ylab="mean rate"
-  y.ax[[5]]$y = 1 - res_disp[, "specificity"]
-  y.values = aggregate(y.ax[[5]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[5]]$ylim = c(0, max(y.values))
-#   y.ax[[5]]$ylim = c(min(y.values), max(y.values))
-  # y.ax[[5]]$ylim = c(0, 1)
+#   i = length(y.ax) + 1
+#   y.ax[[i]] = list()
+#   y.ax[[i]]$title = "False positive rate\n(lower is better)"
+#   y.ax[[i]]$title.ratio = "False positive rate\n(lower is better)"
+#   y.ax[[i]]$measure = "skel_fpr"
+#   y.ax[[i]]$ylab="mean rate"
+#   y.ax[[i]]$y = 1 - res_disp[, "specificity"]
+#   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+#   y.ax[[i]]$ylim = c(0, max(y.values))
+# #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+#   # y.ax[[i]]$ylim = c(0, 1)
   
-  y.ax[[6]] = list()
-  y.ax[[6]]$title = "False negative rate\n(lower is better)"
-  y.ax[[6]]$title.ratio = "False negative rate\n(lower is better)"
-  y.ax[[6]]$measure = "skel_fnr"
-  y.ax[[6]]$ylab="mean rate"
-  y.ax[[6]]$y = 1 - res_disp[, "recall"]
-  y.values = aggregate(y.ax[[6]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[6]]$ylim = c(0, max(y.values))
-#   y.ax[[6]]$ylim = c(min(y.values), max(y.values))
-  # y.ax[[6]]$ylim = c(0, 1)
+#   i = length(y.ax) + 1
+#   y.ax[[i]] = list()
+#   y.ax[[i]]$title = "False negative rate\n(lower is better)"
+#   y.ax[[i]]$title.ratio = "False negative rate\n(lower is better)"
+#   y.ax[[i]]$measure = "skel_fnr"
+#   y.ax[[i]]$ylab="mean rate"
+#   y.ax[[i]]$y = 1 - res_disp[, "recall"]
+#   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+#   y.ax[[i]]$ylim = c(0, max(y.values))
+# #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+#   # y.ax[[i]]$ylim = c(0, 1)
   
-  y.ax[[7]] = list()
-  y.ax[[7]]$title = "Restriction time (CB)"
-  y.ax[[7]]$title.ratio = "Restriction time (CB)"
-  y.ax[[7]]$measure = "time_constraint"
-  y.ax[[7]]$ylab="mean time in seconds"
-  y.ax[[7]]$y = res_disp[, "constraint.time.user"]
-  y.values = aggregate(y.ax[[7]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[7]]$ylim = c(0, max(y.values) * 1.05)
-#   y.ax[[7]]$ylim = c(min(y.values), max(y.values) * 1.05)
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "Restriction time (CB)"
+  y.ax[[i]]$title.ratio = "Restriction time (CB)"
+  y.ax[[i]]$measure = "time_constraint"
+  y.ax[[i]]$ylab="mean time in seconds"
+  y.ax[[i]]$y = res_disp[, "constraint.time.user"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(0, max(y.values) * 1.05)
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values) * 1.05)
   
-  y.ax[[8]] = list()
-  y.ax[[8]]$title = "Number of statistical tests"
-  y.ax[[8]]$title.ratio = "Number of statistical tests"
-  y.ax[[8]]$measure = "nbtests"
-  y.ax[[8]]$ylab="mean nb calls"
-  y.ax[[8]]$y = res_disp[, "nbtests"]
-  y.values = aggregate(y.ax[[8]]$y, list(x, res_disp$method), mean)$x
-  y.ax[[8]]$ylim = c(0, max(y.values) * 1.05)
-#   y.ax[[8]]$ylim = c(min(y.values), max(y.values) * 1.05)
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "Number of statistical tests"
+  y.ax[[i]]$title.ratio = "Number of statistical tests"
+  y.ax[[i]]$measure = "nbtests"
+  y.ax[[i]]$ylab="mean nb calls"
+  y.ax[[i]]$y = res_disp[, "nbtests"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(0, max(y.values) * 1.05)
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values) * 1.05)
 
   for (axis in y.ax) {
     
@@ -164,16 +172,16 @@ for(target in c(names(conf.networks), "all")) {
       legend.label = c()
       pch = 0
       for (method in unique(res_disp$method)) {
-        plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]][1], pch = pch, seps = list(
+        plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]], pch = pch, seps = list(
           method = method
           #  ,search = "tabu"
           #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
           #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
           #  ,p = 1:5
         ))
-        legend.col = c(legend.col, conf.pc.colors[[method]][1])
+        legend.col = c(legend.col, conf.pc.colors[[method]])
         legend.pch = c(legend.pch, pch)
-        legend.label = c(legend.label, conf.pc.labels[[method]][1])
+        legend.label = c(legend.label, conf.pc.labels[[method]])
         pch = pch+1
       }
       # au milieu: ylim[2]/2 + ylim[2]/5
@@ -200,7 +208,7 @@ for(target in c(names(conf.networks), "all")) {
             par(disp.pars.eps)
           }
           
-          boxplot.factor.fig(bx, by, xlab, ylab, title.ratio, conf.pc.colors[[method]][2])
+          boxplot.factor.fig(bx, by, xlab, ylab, title.ratio, conf.pc.colors[[method]])
           dev.off()
         }
       }
@@ -226,7 +234,7 @@ for(target in c(names(conf.networks), "all")) {
 #       par(disp.pars.png)
 #       by = y[res_disp$method == method]
 #       bx = x[res_disp$method == method]
-#       boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
+#       boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]])
 #       dev.off()
 #     }
   }

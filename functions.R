@@ -152,7 +152,8 @@ gen.dataset.from.fitted.bn = function(bn.fitted, n) {
 #   }
 #   
 #   return(as.data.frame(data))
-  return(.Call("rbn_discrete", fitted = bn.fitted, n = as.integer(n), debug = FALSE, PACKAGE = "bnlearn"))
+#   return(.Call("rbn_discrete", fitted = bn.fitted, n = as.integer(n), debug = FALSE, PACKAGE = "bnlearn"))
+  return(rbn(x=bn.fitted, n=n))
 }
 
 gen.dataset = function(vars, dims, parents, probs, n) {
@@ -345,58 +346,78 @@ learn.skeleton = function(params) {
       skeleton = switch(
         method,
         "mmpc" = mmpc(
-          x = training[, order], test = test, alpha = alpha,
-          optimized = FALSE, strict = FALSE, undirected = TRUE),
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          optimized = FALSE, strict = FALSE),
         "mmpc-bt" = mmpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = TRUE, strict = FALSE, undirected = TRUE),
+        "pc" = pc(
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          undirected = TRUE),
+        "rpc" = rpc(
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          pc.method = "mmpc", nbr.join = "OR"),
+        "rpc-and" = rpc(
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          pc.method = "mmpc", nbr.join = "AND"),
+        "rpc2" = rpc(
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          pc.method = "fdr.iapc", nbr.join = "OR"),
+        "rpc2-and" = rpc(
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE,
+          pc.method = "fdr.iapc", nbr.join = "AND"),
         "hpc" = hpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="inter.iapc"),
         "hpc-or" = hpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
           nbr.join="OR", pc.method="inter.iapc"),
         "fast-hpc" = hpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="fast.iapc"),
         "hpc-fdr" = hpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
-          nbr.join="AND", pc.method="fdr.iapc"),
+          nbr.join="AND", pc.method="fdr.iamb"),
         "hpc-fdr-or" = hpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
           nbr.join="OR", pc.method="fdr.iapc"),
         "hpc-fdr-bt" = hpc(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = TRUE, strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="fdr.iapc"),
         "hpc.cached" = hpc.cached(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="inter.iapc"),
         "hpc.cached-fdr" = hpc.cached(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           strict = FALSE, undirected = TRUE,
           nbr.join="AND", pc.method="fdr.iapc"),
-        "hpc3" = hpc.3(
-          x = training[, order], test = test, alpha = alpha,
+        "iambfdr" = fdr.iamb(
+          nbr.join="OR",
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE),
-        "hpc4" = hpc.4(
-          x = training[, order], test = test, alpha = alpha,
-          optimized = FALSE, strict = FALSE, undirected = TRUE,
-          nbr.join = "AND"),
+        "iambfdr-and" = fdr.iamb(
+          nbr.join="AND",
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+          optimized = FALSE, strict = FALSE, undirected = TRUE),
         "iamb" = iamb(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE),
         "inter-iamb" = inter.iamb(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE),
         "fast-iamb" = fast.iamb(
-          x = training[, order], test = test, alpha = alpha,
+          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE),
         "truedag" = skeleton(
           bn.net(get(load(paste("./networks/", target, ".rda", sep=""))))),
@@ -492,8 +513,14 @@ plot.fig.lines = function(res, x, y, seps, color = "red", pch = 3, lty = 1) {
     }
   }
   else {
-    points(aggregate(y, list(x), mean), pch = pch, col = color)
-    lines(aggregate(y, list(x), mean), type = "l", col = color, lwd = 1.5, lty = lty)
+    means = aggregate(y, list(x), mean)
+    xs = means[, 1]
+    means = means[, 2]
+    sds = aggregate(y, list(x), sd)[, 2]
+    
+    points(xs, means, pch = pch, col = color)
+    lines(xs, means, type = "l", col = color, lwd = 1.5, lty = lty)
+#     arrows(xs, means + sds, xs, means - sds, col = color, length=0.05, angle=90, code=3)
   }
 }
 

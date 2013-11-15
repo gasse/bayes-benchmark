@@ -48,7 +48,8 @@ for (network in c(
 
 conf.trainingsizes =  c(50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000)
 conf.pc.methods = c(
-  "mmpc", "hpc"
+  "hpc-fdr", "mmpc"
+#   "rpc", "rpc2-and", "iambfdr", "mmpc", "pc", "hpc", "hpc-fdr"
 #   "truedag", "hpc.cached"
 #   "none"
 #   "hpc", "hpc-or", "fast-hpc", "hpc-fdr", "hpc.cached", "hpc.cached-fdr"
@@ -56,16 +57,16 @@ conf.pc.methods = c(
 #   "none", "truedag"
 #   "iamb", "inter-iamb", "fast-iamb"
   )
-conf.tests = "mi-h"
+conf.tests = "mi" # "mi-h
 conf.alphas = c(0.05) # c(0.01, 0.02, 0.05) c(0)
 conf.trainingreps = 1:10
 conf.trainingpermuts = 1:1
 conf.testsize = 50000
-conf.seed = 1596841
+conf.seed = 0
 conf.nbcores = 2
 
 conf.ss.methods = c("tabu")# "tabu", "2p"
-conf.score = "bde"
+conf.score = "bde"#"bde"
 conf.tabu = 100
 conf.max.tabu = 15
 conf.restart = 0
@@ -74,24 +75,12 @@ conf.perturb = 0
 conf.progress.tracking = TRUE
 conf.fig.format = "png"
 
-conf.pc.colors = list(
-  "iamb" = c("burlywood4", "burlywood3"),
-  "inter-iamb" = c("turquoise3", "turquoise4"),
-  "fast-iamb" = c("orangered4", "orangered3"),
-  "mmpc" = c("red", "red"),
-  "mmpc-bt" = c("orangered4", "orangered3"),
-  "hpc" = c("darkgreen", "forestgreen"),
-  "hpc-or" = c("turquoise3", "turquoise4"),
-  "hpc-fdr" = c("burlywood4", "burlywood3"),
-  "hpc-fdr-or" = c("darkorange", "darkorange3"),
-  "hpc-fdr-bt" = c("darkmagenta", "deeppink4"),
-  "fast-hpc" = c("burlywood4", "burlywood3"),
-  "hpc.cached" = c("blue", "dodgerblue4"),
-  "hpc.cached-fdr" = c("turquoise3", "turquoise4"),
-  "hpc3" = c("black", "grey"),
-  "hpc4" = c("blue", "dodgerblue4"),
-  "none" = c("darkmagenta", "deeppink4"),
-  "truedag" = c("black", "grey"))
+if (length(conf.pc.methods) == 2) {
+  conf.pc.colors = c("darkgreen", "red")
+} else {
+  conf.pc.colors = as.list(rainbow(length(conf.pc.methods)))
+}
+names(conf.pc.colors) = conf.pc.methods
 
 conf.pc.labels = list(
   "iamb" = "IAMB",
@@ -99,6 +88,13 @@ conf.pc.labels = list(
   "fast-iamb" = "Fast-IAMB",
   "mmpc" = "MMPC",
   "mmpc-bt" = "MMPC-BT",
+  "pc" = "PC",
+  "rpc" = "R-MMPC-OR",
+  "rpc-and" = "R_MMPC-AND",
+  "rpc2" = "R-IAPC-OR",
+  "rpc2-and" = "R-IAPC-AND",
+  "iambfdr" = "IAMBFDR",
+  "iambfdr-and" = "IAMBFDR-AND",
   "hpc" = "HPC",
   "hpc-or" = "HPC-OR",
   "hpc-fdr" = "HPC-FDR",
@@ -107,8 +103,6 @@ conf.pc.labels = list(
   "fast-hpc" = "HPC-fast",
   "hpc.cached" = "HPC-cached",
   "hpc.cached-fdr" = "HPC-cached-FDR",
-  "hpc3" = "HPC-mmpc",
-  "hpc4" = "HPC-tabu",
   "none" = "none",
   "truedag" = "truedag")
 

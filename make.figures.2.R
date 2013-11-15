@@ -163,16 +163,16 @@ for(target in c(names(conf.networks), "all")) {
       legend.label = c()
       pch = 0
       for (method in unique(res_disp$method)) {
-        plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]][1], pch = pch, seps = list(
+        plot.fig.lines(res = res_disp, x, y, color = conf.pc.colors[[method]], pch = pch, seps = list(
           method = method
           #  ,search = "tabu"
           #  ,samplesize = c("50", "100", "200", "500", "1500", "5000")
           #  ,network = c("alarm", "insurance", "hailfinder", "mildew", "munin", "pigs", "link")
           #  ,p = 1:5
         ))
-        legend.col = c(legend.col, conf.pc.colors[[method]][1])
+        legend.col = c(legend.col, conf.pc.colors[[method]])
         legend.pch = c(legend.pch, pch)
-        legend.label = c(legend.label, conf.pc.labels[[method]][1])
+        legend.label = c(legend.label, conf.pc.labels[[method]])
         pch = pch+1
       }
       # au milieu: ylim[2]/2 + ylim[2]/5
@@ -199,7 +199,7 @@ for(target in c(names(conf.networks), "all")) {
             par(disp.pars.eps)
           }
           
-          boxplot.factor.fig(bx, by, xlab, ylab, title.ratio, conf.pc.colors[[method]][2])
+          boxplot.factor.fig(bx, by, xlab, ylab, title.ratio, conf.pc.colors[[method]])
           dev.off()
         }
       }
@@ -226,7 +226,7 @@ for(target in c(names(conf.networks), "all")) {
 #         par(disp.pars.png)
 #         by = y[res_disp$method == method]
 #         bx = x[res_disp$method == method]
-#         boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]][1])
+#         boxplot.fig(bx, by, xlab, ylab, title, color = conf.pc.colors[[method]])
 #         dev.off()
 #       }
     }
