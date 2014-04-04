@@ -356,20 +356,23 @@ learn.skeleton = function(params) {
           undirected = TRUE),
         "rpc" = rpc(
           x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
-          optimized = FALSE, strict = FALSE, undirected = TRUE,
-          pc.method = "mmpc", nbr.join = "OR"),
-        "rpc-and" = rpc(
-          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
-          optimized = FALSE, strict = FALSE, undirected = TRUE,
-          pc.method = "mmpc", nbr.join = "AND"),
-        "rpc2" = rpc(
-          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
-          optimized = FALSE, strict = FALSE, undirected = TRUE,
-          pc.method = "fdr.iapc", nbr.join = "OR"),
-        "rpc2-and" = rpc(
-          x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
-          optimized = FALSE, strict = FALSE, undirected = TRUE,
-          pc.method = "fdr.iapc", nbr.join = "AND"),
+          optimized = FALSE, strict = FALSE, undirected = TRUE, nbr.join = "OR"),
+#         "rpc" = rpc(
+#           x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+#           optimized = FALSE, strict = FALSE, undirected = TRUE,
+#           pc.method = "mmpc", nbr.join = "OR"),
+#         "rpc-and" = rpc(
+#           x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+#           optimized = FALSE, strict = FALSE, undirected = TRUE,
+#           pc.method = "mmpc", nbr.join = "AND"),
+#         "rpc2" = rpc(
+#           x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+#           optimized = FALSE, strict = FALSE, undirected = TRUE,
+#           pc.method = "fdr.iapc", nbr.join = "OR"),
+#         "rpc2-and" = rpc(
+#           x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
+#           optimized = FALSE, strict = FALSE, undirected = TRUE,
+#           pc.method = "fdr.iapc", nbr.join = "AND"),
         "hpc" = hpc(
           x = training[, order], test = test, test.args=list(power.rule=5, df.adjust=TRUE), alpha = alpha,
           optimized = FALSE, strict = FALSE, undirected = TRUE,
@@ -555,6 +558,7 @@ boxplot.factor.fig = function(x, y, xlab, ylab, title, color) {
           #          ylab = "",
           border = color,
           boxwex = 0.5,
+          range  = 0,
           ylim = c(min(1, min(ifelse(by == Inf, NA, by), na.rm=TRUE)), max(1, max(ifelse(by == Inf, NA, by), na.rm=TRUE)))
           #          at = aggregate(bx, list(bx), mean)[, "x"],
           #          add = TRUE)

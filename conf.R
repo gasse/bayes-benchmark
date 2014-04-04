@@ -40,7 +40,7 @@ conf.dags = list()
 # conf.testsize = 5000
 
 for (network in c(
-  "child", "insurance", "alarm", "mildew", "hailfinder", "munin1", "pigs", "link"
+  "child", "insurance", "mildew", "alarm", "hailfinder", "munin1", "pigs", "link"
   )) {
   conf.networks[[network]] = get(load(file=paste("networks/", network, ".rda", sep="")))
   conf.dags[[network]] = bn.net(conf.networks[[network]])
@@ -63,7 +63,7 @@ conf.trainingreps = 1:10
 conf.trainingpermuts = 1:1
 conf.testsize = 50000
 conf.seed = 0
-conf.nbcores = 2
+conf.nbcores = 4
 
 conf.ss.methods = c("tabu")# "tabu", "2p"
 conf.score = "bde"#"bde"
@@ -73,7 +73,7 @@ conf.restart = 0
 conf.perturb = 0
 
 conf.progress.tracking = TRUE
-conf.fig.format = "png"
+conf.fig.format = "eps"
 
 if (length(conf.pc.methods) == 2) {
   conf.pc.colors = c("darkgreen", "red")
@@ -89,20 +89,20 @@ conf.pc.labels = list(
   "mmpc" = "MMPC",
   "mmpc-bt" = "MMPC-BT",
   "pc" = "PC",
-  "rpc" = "R-MMPC-OR",
-  "rpc-and" = "R_MMPC-AND",
-  "rpc2" = "R-IAPC-OR",
-  "rpc2-and" = "R-IAPC-AND",
+#   "rpc" = "R-MMPC-OR",
+#   "rpc-and" = "R_MMPC-AND",
+#   "rpc2" = "R-IAPC-OR",
+#   "rpc2-and" = "R-IAPC-AND",
   "iambfdr" = "IAMBFDR",
   "iambfdr-and" = "IAMBFDR-AND",
   "hpc" = "HPC",
   "hpc-or" = "HPC-OR",
-  "hpc-fdr" = "HPC-FDR",
+  "hpc-fdr" = "HPC",
   "hpc-fdr-or" = "HPC-FDR-OR",
   "hpc-fdr-bt" = "HPC-FDR-BT",
   "fast-hpc" = "HPC-fast",
-  "hpc.cached" = "HPC-cached",
-  "hpc.cached-fdr" = "HPC-cached-FDR",
+#   "hpc.cached" = "HPC-cached",
+#   "hpc.cached-fdr" = "HPC-cached-FDR",
   "none" = "none",
   "truedag" = "truedag")
 

@@ -58,6 +58,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[i]]$ylim = c(0, max(y.values))
 #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
   # y.ax[[i]]$ylim = c(0, sqrt(2))
+  y.ax[[i]]$legend.pos = "topright"
   
   i = length(y.ax) + 1
   y.ax[[i]] = list()
@@ -70,6 +71,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[i]]$ylim = c(min(y.values), 1)
 #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
   # y.ax[[i]]$ylim = c(0, 1)
+  y.ax[[i]]$legend.pos = "bottomright"
   
   i = length(y.ax) + 1
   y.ax[[i]] = list()
@@ -82,6 +84,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[i]]$ylim = c(min(y.values), 1)
 #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
   # y.ax[[i]]$ylim = c(0, 1)
+  y.ax[[i]]$legend.pos = "bottomright"
   
 #   i = length(y.ax) + 1
 #   y.ax[[i]] = list()
@@ -95,29 +98,31 @@ for(target in c(names(conf.networks), "all")) {
 # #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
 #   # y.ax[[i]]$ylim = c(0, 1)
   
-#   i = length(y.ax) + 1
-#   y.ax[[i]] = list()
-#   y.ax[[i]]$title = "False positive rate\n(lower is better)"
-#   y.ax[[i]]$title.ratio = "False positive rate\n(lower is better)"
-#   y.ax[[i]]$measure = "skel_fpr"
-#   y.ax[[i]]$ylab="mean rate"
-#   y.ax[[i]]$y = 1 - res_disp[, "specificity"]
-#   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
-#   y.ax[[i]]$ylim = c(0, max(y.values))
-# #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
-#   # y.ax[[i]]$ylim = c(0, 1)
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "False positive rate\n(lower is better)"
+  y.ax[[i]]$title.ratio = "False positive rate\n(lower is better)"
+  y.ax[[i]]$measure = "skel_fpr"
+  y.ax[[i]]$ylab="mean rate"
+  y.ax[[i]]$y = 1 - res_disp[, "specificity"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(0, max(y.values))
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+  # y.ax[[i]]$ylim = c(0, 1)
+  y.ax[[i]]$legend.pos = "topleft"
   
-#   i = length(y.ax) + 1
-#   y.ax[[i]] = list()
-#   y.ax[[i]]$title = "False negative rate\n(lower is better)"
-#   y.ax[[i]]$title.ratio = "False negative rate\n(lower is better)"
-#   y.ax[[i]]$measure = "skel_fnr"
-#   y.ax[[i]]$ylab="mean rate"
-#   y.ax[[i]]$y = 1 - res_disp[, "recall"]
-#   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
-#   y.ax[[i]]$ylim = c(0, max(y.values))
-# #   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
-#   # y.ax[[i]]$ylim = c(0, 1)
+  i = length(y.ax) + 1
+  y.ax[[i]] = list()
+  y.ax[[i]]$title = "False negative rate\n(lower is better)"
+  y.ax[[i]]$title.ratio = "False negative rate\n(lower is better)"
+  y.ax[[i]]$measure = "skel_fnr"
+  y.ax[[i]]$ylab="mean rate"
+  y.ax[[i]]$y = 1 - res_disp[, "recall"]
+  y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
+  y.ax[[i]]$ylim = c(0, max(y.values))
+#   y.ax[[i]]$ylim = c(min(y.values), max(y.values))
+  # y.ax[[i]]$ylim = c(0, 1)
+  y.ax[[i]]$legend.pos = "topright"
   
   i = length(y.ax) + 1
   y.ax[[i]] = list()
@@ -129,6 +134,7 @@ for(target in c(names(conf.networks), "all")) {
   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
   y.ax[[i]]$ylim = c(0, max(y.values) * 1.05)
 #   y.ax[[i]]$ylim = c(min(y.values), max(y.values) * 1.05)
+  y.ax[[i]]$legend.pos = "topleft"
   
   i = length(y.ax) + 1
   y.ax[[i]] = list()
@@ -140,6 +146,7 @@ for(target in c(names(conf.networks), "all")) {
   y.values = aggregate(y.ax[[i]]$y, list(x, res_disp$method), mean)$x
   y.ax[[i]]$ylim = c(0, max(y.values) * 1.05)
 #   y.ax[[i]]$ylim = c(min(y.values), max(y.values) * 1.05)
+  y.ax[[i]]$legend.pos = "topleft"
 
   for (axis in y.ax) {
     
@@ -150,6 +157,7 @@ for(target in c(names(conf.networks), "all")) {
     measure = axis$measure
     ylim = axis$ylim
     y_truedag = axis$y_truedag
+    legend.pos = axis$legend.pos
     
     cat(target, measure, "\n")
 
@@ -185,7 +193,8 @@ for(target in c(names(conf.networks), "all")) {
         pch = pch+1
       }
       # au milieu: ylim[2]/2 + ylim[2]/5
-      legend(max(x) - 2*max(x)/5, ylim[2], legend.label, cex=0.8, col=legend.col, pch=legend.pch);
+#       legend(max(x) - 2*max(x)/5, ylim[2], legend.label, cex=0.8, col=legend.col, pch=legend.pch)
+      legend(legend.pos, "(x,y)", legend=legend.label, cex=0.8, col=legend.col, pch=legend.pch)
     }
     
     if (target == "all") {

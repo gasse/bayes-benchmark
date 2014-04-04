@@ -54,6 +54,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[1]]$ylab = "mean time in seconds"
   y.ax[[1]]$y = res_disp[, "search.time.user"]
   y.ax[[1]]$ylim = c(0, max(aggregate(y.ax[[1]]$y, list(x, res_disp$method), mean)$x) * 1.05)
+  y.ax[[1]]$legend.pos = "topleft"
   
   y.ax[[2]] = list()
   y.ax[[2]]$title = "Total time"
@@ -63,6 +64,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[2]]$y = res_disp[, "constraint.time.user"] + res_disp[, "search.time.user"]
   y.ax[[2]]$y[is.na(y.ax[[2]]$y)] = res_disp$search.time.user[is.na(y.ax[[2]]$y)]
   y.ax[[2]]$ylim = c(0, max(aggregate(y.ax[[2]]$y, list(x, res_disp$method), mean)$x) * 1.05)
+  y.ax[[2]]$legend.pos = "topleft"
   
   y.ax[[3]] = list()
   y.ax[[3]]$title = "Number of scores"
@@ -71,6 +73,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[3]]$ylab = "mean nb calls"
   y.ax[[3]]$y = res_disp[, "nbscores"]
   y.ax[[3]]$ylim = c(0, max(aggregate(y.ax[[3]]$y, list(x, res_disp$method), mean)$x) * 1.05)
+  y.ax[[3]]$legend.pos = "bottomright"
   
   y.ax[[4]] = list()
   y.ax[[4]]$title = "Structural Hamming Distance\n(lower is better)"
@@ -79,6 +82,7 @@ for(target in c(names(conf.networks), "all")) {
   y.ax[[4]]$ylab = "mean distance"
   y.ax[[4]]$y = res_disp[, "shd"]
   y.ax[[4]]$ylim = c(0, max(aggregate(y.ax[[4]]$y, list(x, res_disp$method), mean)$x) * 1.05)
+  y.ax[[4]]$legend.pos = "bottomright"
   
   y.ax[[5]] = list()
   y.ax[[5]]$title = "log(BDeu post.) on train data\n(higher is better)"
@@ -92,6 +96,7 @@ for(target in c(names(conf.networks), "all")) {
     y.ax[[5]]$ylim[1] = min(y.ax[[5]]$ylim[1], min(aggregate(y.ax[[5]]$y_truedag, list(x_truedag), mean)$x))
     y.ax[[5]]$ylim[2] = max(y.ax[[5]]$ylim[2], max(aggregate(y.ax[[5]]$y_truedag, list(x_truedag), mean)$x))
   }
+  y.ax[[5]]$legend.pos = "bottomright"
   
   y.ax[[6]] = list()
   y.ax[[6]]$title = "BIC on train data\n(higher is better)"
@@ -105,6 +110,7 @@ for(target in c(names(conf.networks), "all")) {
     y.ax[[6]]$ylim[1] = min(y.ax[[6]]$ylim[1], min(aggregate(y.ax[[6]]$y_truedag, list(x_truedag), mean)$x))
     y.ax[[6]]$ylim[2] = max(y.ax[[6]]$ylim[2], max(aggregate(y.ax[[6]]$y_truedag, list(x_truedag), mean)$x))
   }
+  y.ax[[6]]$legend.pos = "bottomright"
   
   y.ax[[7]] = list()
   y.ax[[7]]$title = "log(BDeu post.) on test data\n(higher is better)"
@@ -118,6 +124,7 @@ for(target in c(names(conf.networks), "all")) {
     y.ax[[7]]$ylim[1] = min(y.ax[[7]]$ylim[1], min(aggregate(y.ax[[7]]$y_truedag, list(x_truedag), mean)$x))
     y.ax[[7]]$ylim[2] = max(y.ax[[7]]$ylim[2], max(aggregate(y.ax[[7]]$y_truedag, list(x_truedag), mean)$x))
   }
+  y.ax[[7]]$legend.pos = "bottomright"
   
   y.ax[[8]] = list()
   y.ax[[8]]$title = "BIC on test data\n(higher is better)"
@@ -131,6 +138,7 @@ for(target in c(names(conf.networks), "all")) {
     y.ax[[8]]$ylim[1] = min(y.ax[[8]]$ylim[1], min(aggregate(y.ax[[8]]$y_truedag, list(x_truedag), mean)$x))
     y.ax[[8]]$ylim[2] = max(y.ax[[8]]$ylim[2], max(aggregate(y.ax[[8]]$y_truedag, list(x_truedag), mean)$x))
   }
+  y.ax[[8]]$legend.pos = "bottomright"
   
   for (axis in y.ax) {
     
@@ -141,6 +149,7 @@ for(target in c(names(conf.networks), "all")) {
     ylab = axis$ylab
     ylim = axis$ylim
     y_truedag = axis$y_truedag
+    legend.pos = axis$legend.pos
     
     cat(target, measure, "\n")
     
@@ -176,7 +185,8 @@ for(target in c(names(conf.networks), "all")) {
         pch = pch+1
       }
       # au milieu: ylim[2]/2 + ylim[2]/5
-      legend(max(x) - 2*max(x)/5, ylim[2], legend.label, cex=0.8, col=legend.col, pch=legend.pch);
+#       legend(max(x) - 2*max(x)/5, ylim[2], legend.label, cex=0.8, col=legend.col, pch=legend.pch)
+      legend(legend.pos, "(x,y)", legend=legend.label, cex=0.8, col=legend.col, pch=legend.pch)
     }
     
     if (target == "all") {
